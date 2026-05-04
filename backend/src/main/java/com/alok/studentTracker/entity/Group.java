@@ -13,7 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "group")
+@Table(name = "app_group")
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
