@@ -31,8 +31,8 @@ public class EducationalMaterial {
     private String subject;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "training_item_id", nullable = false)
-    private TrainingItem trainingItem;
+    @JoinColumn(name = "training_subject_id", nullable = false)
+    private TrainingSubject trainingSubject;
 
     // Путь к файлу на диске
     @Column(nullable = false)

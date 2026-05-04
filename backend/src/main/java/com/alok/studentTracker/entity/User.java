@@ -3,6 +3,7 @@ package com.alok.studentTracker.entity;
 import com.alok.studentTracker.Security.RolePermissionMapping;
 import com.alok.studentTracker.entity.type.AuthProviderType;
 import com.alok.studentTracker.entity.type.RoleType;
+import com.alok.studentTracker.entity.type.StudentType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,6 +36,9 @@ public class User implements UserDetails {
 
     @Column(unique = true, nullable = false)
     private String username;
+
+    @Column(nullable = false)
+    private StudentType studentType = StudentType.STANDARD;
 
     @Column(nullable = false)
     private String password;

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TrainingItemDTO {
+public class TrainingSubjectDTO {
     private Long id;
 
     @NotBlank(message = "Title is required")
@@ -22,7 +22,4 @@ public class TrainingItemDTO {
     @NotNull(message = "Group ID is required")
     private Long groupId;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
 }
