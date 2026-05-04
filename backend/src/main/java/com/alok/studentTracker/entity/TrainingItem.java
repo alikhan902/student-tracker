@@ -1,9 +1,10 @@
 package com.alok.studentTracker.entity;
-
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -32,6 +33,13 @@ public class TrainingItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
+    
+    @OneToMany(mappedBy = "trainingItem",
+           cascade = CascadeType.ALL,
+           orphanRemoval = true,
+           fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<EducationalMaterial> educationalMaterials = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {

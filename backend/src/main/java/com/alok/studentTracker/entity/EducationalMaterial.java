@@ -30,6 +30,10 @@ public class EducationalMaterial {
     @Column(nullable = false)
     private String subject;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "training_item_id", nullable = false)
+    private TrainingItem trainingItem;
+
     // Путь к файлу на диске
     @Column(nullable = false)
     private String filePath;

@@ -41,4 +41,6 @@ public class Group {
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private Set<TrainingItem> trainingItems = new HashSet<>();
+
+
 }
