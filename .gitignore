@@ -1,0 +1,17 @@
+# Env
+.env
+
+# IDE
+.idea/
+
+# Node
+node_modules/
+dist/
+
+# Java
+target/
+src/main/resources/
+backend/src/main/resources
+
+# Uploads
+backend/uploads/
