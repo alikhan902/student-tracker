@@ -1,6 +1,7 @@
 package com.alok.studentTracker.controller;
 
 import com.alok.studentTracker.dto.GroupDTO;
+import com.alok.studentTracker.dto.Group.GroupsAllDTO;
 import com.alok.studentTracker.entity.Group;
 import com.alok.studentTracker.service.GroupService;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/groups")
@@ -38,10 +38,17 @@ public class GroupController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping
-    public ResponseEntity<List<Group>> getAllGroups() {
-        List<Group> groups = groupService.getAllGroups();
-        return ResponseEntity.ok(groups);
+    @GetMapping("/my-group")
+    public ResponseEntity<GroupsAllDTO> getMyGroup() {
+        return groupService.getMyGroup()
+                .map(g -> new GroupsAllDTO(
+                        g.getId(),
+                        g.getName(),
+                        g.getCode(),
+                        g.getDescription()
+                ))
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")

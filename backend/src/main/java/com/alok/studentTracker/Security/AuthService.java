@@ -9,6 +9,7 @@ import com.alok.studentTracker.dto.SignupResponseDTO;
 import com.alok.studentTracker.entity.User;
 
 import com.alok.studentTracker.entity.type.RoleType;
+import com.alok.studentTracker.entity.type.StudentType;
 import com.alok.studentTracker.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -66,6 +67,7 @@ public class AuthService {
                 .email(signupRequestDTO.getUsername())
                 .providerId(providerId)
                 .providerType(authProviderType)
+                .studentType(StudentType.STANDARD)
                 .roles(Set.of(RoleType.USER))
                 .build();
 

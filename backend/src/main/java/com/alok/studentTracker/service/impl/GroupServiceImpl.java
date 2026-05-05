@@ -5,10 +5,10 @@ import com.alok.studentTracker.dto.GroupDTO;
 import com.alok.studentTracker.entity.Group;
 import com.alok.studentTracker.service.GroupService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,8 +40,16 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<Group> getAllGroups() {
-        return groupRepository.findAll();
+    public Optional<Group> getMyGroup() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return Optional.empty();
+        }
+        var principal = authentication.getPrincipal();
+        if (principal instanceof com.alok.studentTracker.entity.User user) {
+            return Optional.ofNullable(user.getGroup());
+        }
+        return Optional.empty();
     }
 
     @Override
