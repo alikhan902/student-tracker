@@ -31,9 +31,8 @@ export default function ProfilePage() {
 
   const getRoleColor = (role) => {
     switch(role) {
-      case 'ADMIN': return 'bg-amber-500/20 text-amber-500 border-amber-500/30';
-      case 'AUDITOR': return 'bg-blue-500/20 text-blue-500 border-blue-500/30';
-      case 'USER': return 'bg-success/20 text-success border-success/30';
+      case "STUDENT": return 'bg-amber-500/20 text-amber-500 border-amber-500/30';
+      case "HEADMEN": return 'bg-blue-500/20 text-blue-500 border-blue-500/30';
       default: return 'bg-gray-500/20 text-gray-500 border-gray-500/30';
     }
   };
@@ -149,12 +148,13 @@ export default function ProfilePage() {
               <span className="flex items-center bg-lightblue-surface px-3 py-1.5 rounded-lg border border-lightblue-border">
                 <Mail className="w-4 h-4 mr-2 text-gray-500" /> {user.email || 'Email не указан'}
               </span>
-              <span className={`px-3 py-1.5 rounded-lg border text-xs font-bold uppercase tracking-wide flex items-center ${getRoleColor(user.roles?.[0] || 'USER')}`}>
-                <Shield className="w-3.5 h-3.5 mr-1.5" /> {user.roles?.[0] || 'USER'}
-              </span>
               <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide flex items-center ${getProviderColor(user.providerType || 'LOCAL')}`}>
                 {user.providerType || 'LOCAL'}
               </span>
+              <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide flex items-center ${getRoleColor(user.studentType)}`}>
+                {user.studentType === 0 ? 'Пользователь' : user.studentType === 1 ? 'Администратор' : 'Роль не указана'}
+              </span>
+              <Shield className={`w-4 h-4 text-gray-500 ${getRoleColor(user.studentType)}`} onClick={console.log(user.studentType)}/>
             </div>
           </div>
           

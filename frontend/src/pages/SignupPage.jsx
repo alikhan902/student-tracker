@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 export default function SignupPage() {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
+  const [studentType, setStudentType] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -21,7 +22,7 @@ export default function SignupPage() {
       return;
     }
     setLoading(true);
-    const success = await signup({ name, username, password });
+    const success = await signup({ name, studentType, username, password });
     setLoading(false);
     if (success) {
       navigate('/login');
@@ -34,7 +35,7 @@ export default function SignupPage() {
         <div className="p-8">
           <div className="text-center mb-8 justify-center">
             <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">Создать аккаунт</h1>
-            <p className="text-gray-500">Присоединяйтесь к нам, чтобы начать управление расходами</p>
+            <p className="text-gray-500">Присоединяйтесь к нам, чтобы отслеживать учебные файлы группы</p>
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -69,6 +70,26 @@ export default function SignupPage() {
                   className="w-full pl-10 pr-3 py-2 bg-lightblue-surface border border-lightblue-border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition"
                   placeholder="ivanov123"
                 />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Роль пользователя</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-gray-500" />
+                </div>
+                <select
+                  type="text"
+                  required
+                  value={studentType}
+                  onChange={(e) => setStudentType(e.target.value)}
+                  className="w-full pl-10 pr-3 py-2 bg-lightblue-surface border border-lightblue-border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition"
+                >
+                  <option value="" disabled hidden>Выберите роль</option>
+                  <option value="0">Студент</option>
+                  <option value="1">Староста</option>
+                </select>
               </div>
             </div>
 

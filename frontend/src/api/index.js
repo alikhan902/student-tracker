@@ -14,7 +14,7 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken');
 
-    console.log("🔐 TOKEN SENT:", token); // debug
+    console.log("TOKEN SENT:", token); // debug
 
     if (token) {
       config.headers = {

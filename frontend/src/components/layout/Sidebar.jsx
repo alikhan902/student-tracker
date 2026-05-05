@@ -2,7 +2,10 @@ import { NavLink } from 'react-router-dom';
 import { UserCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
-const NAV_ITEMS = [];
+const NAV_ITEMS_PROFILE = [
+  { path: '/profile', label: 'Профиль', icon: UserCircle },
+  { path: '/subjects', label: 'Предметы', icon: UserCircle },
+];
 
 export const Sidebar = ({ isOpen, setMobileMenuOpen }) => {
   const { user, logout } = useAuth();
@@ -10,15 +13,15 @@ export const Sidebar = ({ isOpen, setMobileMenuOpen }) => {
   return (
     <>
       <div 
-        className={`fixed inset-y-0 left-0 z-20 w-64 bg-white border-r border-lightblue-border transform transition-transform duration-300 ease-in-out md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`fixed inset-y-0 left-0 z-20 w-64 bg-white border-r border-lightblue-border transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-center h-16 border-b border-lightblue-border px-4">
-            <h1 className="text-xl font-heading font-bold text-primary">Тестовый проект</h1>
+            <h1 className="text-xl font-heading font-bold text-primary">Список групп</h1>
           </div>
           
           <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto scrollbar-custom">
-            {NAV_ITEMS.map((item) => {
+            {NAV_ITEMS_PROFILE.map((item) => {
               const Icon = item.icon;
               return (
                 <NavLink
@@ -38,23 +41,6 @@ export const Sidebar = ({ isOpen, setMobileMenuOpen }) => {
                 </NavLink>
               );
             })}
-            
-            <div className="pt-4 mt-4 border-t border-lightblue-border">
-              <NavLink
-                to="/profile"
-                onClick={() => setMobileMenuOpen(false)}
-                className={({ isActive }) =>
-                  `flex items-center px-4 py-3 rounded-lg transition-colors ${
-                    isActive 
-                      ? 'bg-primary text-white' 
-                      : 'text-gray-700 hover:bg-lightblue-50 hover:text-gray-900'
-                  }`
-                }
-              >
-                <UserCircle className="w-5 h-5 mr-3" />
-                <span className="font-medium">Профиль</span>
-              </NavLink>
-            </div>
           </nav>
 
           <div className="p-4 border-t border-lightblue-border">
@@ -80,7 +66,7 @@ export const Sidebar = ({ isOpen, setMobileMenuOpen }) => {
       {/* Mobile overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 z-10 bg-black/50 md:hidden"
+          className="fixed inset-0 z-10 bg-black/50"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}

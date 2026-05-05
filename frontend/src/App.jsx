@@ -10,6 +10,8 @@ import ProfilePage from './pages/ProfilePage';
 
 // IMPORTANT: Add this import
 import OAuthRedirect from './pages/OAuthRedirect';
+import SubjectSelectionPage from './pages/SubjectsSelectionPage';
+import SubjectPage from './pages/SubjectPage';
 
 function App() {
   return (<Routes>
@@ -24,8 +26,13 @@ function App() {
     {/* Protected Routes */}
     <Route element={<PrivateRoute />}>
       <Route element={<Layout />}>
-        <Route path="/" element={<Navigate to="/profile" replace />} />
         <Route path="/profile" element={<ProfilePage />} />
+      </Route>
+    </Route>
+    
+    <Route element={<PrivateRoute />}>
+      <Route element={<Layout />}>
+        <Route path="/subjects" element={<SubjectPage />} />
       </Route>
     </Route>
 
