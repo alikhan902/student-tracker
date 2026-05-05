@@ -3,6 +3,7 @@ package com.alok.studentTracker.service.impl;
 import com.alok.studentTracker.Repository.GroupRepository;
 import com.alok.studentTracker.dto.GroupDTO;
 import com.alok.studentTracker.entity.Group;
+import com.alok.studentTracker.entity.UserPrinciple;
 import com.alok.studentTracker.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,8 +47,8 @@ public class GroupServiceImpl implements GroupService {
             return Optional.empty();
         }
         var principal = authentication.getPrincipal();
-        if (principal instanceof com.alok.studentTracker.entity.User user) {
-            return Optional.ofNullable(user.getGroup());
+        if (principal instanceof UserPrinciple userPrinciple) {
+            return Optional.ofNullable(userPrinciple.getUser().getGroup());
         }
         return Optional.empty();
     }

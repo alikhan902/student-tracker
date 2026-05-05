@@ -77,7 +77,7 @@ public class User implements UserDetails {
     @Builder.Default
     private Set<RoleType> roles = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "group_id")
     private Group group;
 
