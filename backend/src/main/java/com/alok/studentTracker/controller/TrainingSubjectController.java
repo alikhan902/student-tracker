@@ -1,6 +1,7 @@
 package com.alok.studentTracker.controller;
 
 import com.alok.studentTracker.dto.TrainingSubjectDTO;
+import com.alok.studentTracker.dto.TrainingSubjectAllDTO;
 import com.alok.studentTracker.entity.TrainingSubject;
 import com.alok.studentTracker.service.TrainingSubjectService;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +35,17 @@ public class TrainingSubjectController {
 
 
     @GetMapping("/get-by-group")
-    public ResponseEntity<List<TrainingSubject>> searchTrainingSubjects() {
-        List<TrainingSubject> trainingSubjects = trainingSubjectService.getTrainingSubjectsByGroup();
+    public ResponseEntity<List<TrainingSubjectAllDTO>> searchTrainingSubjects() {
+
+        List<TrainingSubjectAllDTO> trainingSubjects =
+                trainingSubjectService.getTrainingSubjectsByGroup()
+                        .stream()
+                        .map(subject -> new TrainingSubjectAllDTO(
+                                subject.getId(),
+                                subject.getTitle()
+                        ))
+                        .toList();
+
         return ResponseEntity.ok(trainingSubjects);
     }
 

@@ -47,7 +47,7 @@ public class GroupController {
         return ResponseEntity.ok("Group deleted successfully");
     }
 
-    @PutMapping("/add-student")
+    @PutMapping("/add-student/{username}")
     public ResponseEntity<String> addStudentToGroup(@PathVariable String username) {
         try {
             groupService.addStudentToGroup(username);
