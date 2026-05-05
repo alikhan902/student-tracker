@@ -30,6 +30,9 @@ public class TrainingSubject {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column
+    private String photoUrl;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;

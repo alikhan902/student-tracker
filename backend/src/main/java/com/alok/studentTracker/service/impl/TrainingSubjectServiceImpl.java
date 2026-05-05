@@ -3,11 +3,12 @@ package com.alok.studentTracker.service.impl;
 import com.alok.studentTracker.Repository.GroupRepository;
 import com.alok.studentTracker.Repository.TrainingSubjectRepository;
 import com.alok.studentTracker.Repository.UserRepository;
+import com.alok.studentTracker.entity.User;
+import com.alok.studentTracker.service.ValidationService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import com.alok.studentTracker.dto.TrainingSubjectDTO;
 import com.alok.studentTracker.entity.Group;
 import com.alok.studentTracker.entity.TrainingSubject;
-import org.springframework.security.core.context.SecurityContextHolder;
-import com.alok.studentTracker.entity.User;
 import com.alok.studentTracker.service.TrainingSubjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,16 +24,23 @@ public class TrainingSubjectServiceImpl implements TrainingSubjectService {
     private final TrainingSubjectRepository trainingSubjectRepository;
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
+    private final ValidationService validationService;
 
     @Override
     public TrainingSubject createTrainingSubject(TrainingSubjectDTO trainingSubjectDTO) {
-        Group group = groupRepository.findById(trainingSubjectDTO.getGroupId())
-                .orElseThrow(() -> new IllegalArgumentException("Group not found with id: " + trainingSubjectDTO.getGroupId()));
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        validationService.validateHeadmanAccess(currentUser.getGroup().getId());
 
         TrainingSubject trainingSubject = TrainingSubject.builder()
                 .title(trainingSubjectDTO.getTitle())
                 .description(trainingSubjectDTO.getDescription())
-                .group(group)
+                .group(currentUser.getGroup())
                 .build();
 
         return trainingSubjectRepository.save(trainingSubject);
@@ -62,15 +70,23 @@ public class TrainingSubjectServiceImpl implements TrainingSubjectService {
 
     @Override
     public TrainingSubject updateTrainingSubject(Long id, TrainingSubjectDTO trainingSubjectDTO) {
-        return trainingSubjectRepository.findById(id).map(trainingSubject -> {
-            trainingSubject.setTitle(trainingSubjectDTO.getTitle());
-            trainingSubject.setDescription(trainingSubjectDTO.getDescription());
-            return trainingSubjectRepository.save(trainingSubject);
-        }).orElseThrow(() -> new IllegalArgumentException("TrainingSubject not found with id: " + id));
+        TrainingSubject trainingSubject = trainingSubjectRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("TrainingSubject not found with id: " + id));
+        
+        validationService.validateHeadmanAccess(trainingSubject.getGroup().getId());
+        
+        trainingSubject.setTitle(trainingSubjectDTO.getTitle());
+        trainingSubject.setDescription(trainingSubjectDTO.getDescription());
+        
+        return trainingSubjectRepository.save(trainingSubject);
     }
 
     @Override
     public void deleteTrainingSubject(Long id) {
+        Optional<TrainingSubject> trainingSubjectOpt = trainingSubjectRepository.findById(id);
+        if (trainingSubjectOpt.isPresent()) {
+            validationService.validateHeadmanAccess(trainingSubjectOpt.get().getGroup().getId());
+        }
         trainingSubjectRepository.deleteById(id);
     }
 }

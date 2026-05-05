@@ -34,7 +34,7 @@ public class TrainingSubjectController {
     }
 
 
-    @GetMapping("/get-by-group")
+    @GetMapping("/")
     public ResponseEntity<List<TrainingSubjectAllDTO>> searchTrainingSubjects() {
 
         List<TrainingSubjectAllDTO> trainingSubjects =
@@ -42,7 +42,8 @@ public class TrainingSubjectController {
                         .stream()
                         .map(subject -> new TrainingSubjectAllDTO(
                                 subject.getId(),
-                                subject.getTitle()
+                                subject.getTitle(),
+                                subject.getPhotoUrl()
                         ))
                         .toList();
 
