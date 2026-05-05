@@ -47,10 +47,6 @@ public class GroupServiceImpl implements GroupService {
 
         Group group = Group.builder()
                 .name(groupDTO.getName())
-                .code(groupDTO.getCode())
-                .description(groupDTO.getDescription())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
 
         Group savedGroup = groupRepository.save(group);
@@ -86,9 +82,6 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new RuntimeException("Group not found"));
 
         group.setName(groupDTO.getName());
-        group.setCode(groupDTO.getCode());
-        group.setDescription(groupDTO.getDescription());
-        group.setUpdatedAt(LocalDateTime.now());
 
         return groupRepository.save(group);
     }

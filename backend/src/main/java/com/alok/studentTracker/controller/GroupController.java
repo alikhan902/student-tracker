@@ -29,9 +29,7 @@ public class GroupController {
         return groupService.getMyGroup()
                 .map(g -> new GroupsAllDTO(
                         g.getId(),
-                        g.getName(),
-                        g.getCode(),
-                        g.getDescription()
+                        g.getName()
                 ))
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

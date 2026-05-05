@@ -22,18 +22,6 @@ public class Group {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private String code;
-
-    @Column
-    private String description;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private Set<User> users = new HashSet<>();
