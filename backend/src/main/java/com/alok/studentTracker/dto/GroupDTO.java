@@ -11,17 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GroupDTO {
-    private Long id;
-
     @NotBlank(message = "Group name is required")
     private String name;
 
-    @NotBlank(message = "Group code is required")
-    private String code;
-
-    private String description;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
 }

@@ -74,12 +74,12 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public Group updateGroup(Long id, GroupDTO groupDTO) {
+    public Group updateGroup(GroupDTO groupDTO) {
 
-        validationService.validateHeadmanAccess(id); // 🔥 вот здесь проверка
-
-        Group group = groupRepository.findById(id)
+        Group group = getMyGroup()
                 .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        validationService.validateHeadmanAccess(group.getId());
 
         group.setName(groupDTO.getName());
 
@@ -88,12 +88,12 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public void deleteGroup(Long id) {
+    public void deleteGroup() {
 
-        User currentUser = validationService.validateHeadmanAccess(id);
-
-        Group group = groupRepository.findById(id)
+        Group group = getMyGroup()
                 .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        User currentUser = validationService.validateHeadmanAccess(group.getId());
 
         // List<User> users = userRepository.findAllByGroup(group);
 

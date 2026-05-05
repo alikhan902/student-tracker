@@ -35,19 +35,19 @@ public class GroupController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Group> updateGroup(@PathVariable Long id, @Valid @RequestBody GroupDTO groupDTO) {
+    @PutMapping()
+    public ResponseEntity<String> updateGroup(@Valid @RequestBody GroupDTO groupDTO) {
         try {
-            Group group = groupService.updateGroup(id, groupDTO);
-            return ResponseEntity.ok(group);
+            Group group = groupService.updateGroup(groupDTO);
+            return ResponseEntity.ok("Group updated successfully");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGroup(@PathVariable Long id) {
-        groupService.deleteGroup(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping()
+    public ResponseEntity<String> deleteGroup() {
+        groupService.deleteGroup();
+        return ResponseEntity.ok("Group deleted successfully");
     }
 }

@@ -9,6 +9,6 @@ public interface GroupService {
     Group createGroup(GroupDTO groupDTO);
 
     Optional<Group> getMyGroup();
-    Group updateGroup(Long id, GroupDTO groupDTO);
-    void deleteGroup(Long id);
+    Group updateGroup(GroupDTO groupDTO);
+    void deleteGroup();
 }
