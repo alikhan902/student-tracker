@@ -2,6 +2,7 @@ package com.alok.studentTracker.dto;
 
 import com.alok.studentTracker.entity.type.AuthProviderType;
 import com.alok.studentTracker.entity.type.RoleType;
+import com.alok.studentTracker.entity.type.StudentType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -18,4 +19,5 @@ public class UserProfileResponseDTO {
     private String email;
     private Set<RoleType> roles;
     private AuthProviderType providerType;
+    private StudentType studentType;
 }

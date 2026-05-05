@@ -67,7 +67,7 @@ public class AuthService {
                 .email(signupRequestDTO.getUsername())
                 .providerId(providerId)
                 .providerType(authProviderType)
-                .studentType(StudentType.STANDARD)
+                .studentType(signupRequestDTO.getStudentType())
                 .roles(Set.of(RoleType.USER))
                 .build();
 
@@ -78,7 +78,12 @@ public class AuthService {
             user.setPassword(UUID.randomUUID().toString());
         }
        userRepository.save(user);
-        emailService.sendWelcomeEmail(user.getEmail(), user.getName());
+        try {
+            emailService.sendWelcomeEmail(user.getEmail(), user.getName());
+        } catch (Exception e) {
+            // Игнорируем ошибки отправки email при регистрации
+            System.err.println("Failed to send welcome email: " + e.getMessage());
+        }
         return user;
     }
     public SignupResponseDTO SignUp(SignupRequestDTO signupRequestDTO) {
@@ -101,7 +106,7 @@ public class AuthService {
         if(user==null && EmailUser==null){
 
             String userName=authUtil.determineUsernameFromOAuth2User(oAuth2User,registrationId,ProviderId);
-            user=SignUpInternal(new SignupRequestDTO(userName,null,name), ProviderId,ProviderType);
+            user=SignUpInternal(new SignupRequestDTO(userName,null,name,null), ProviderId,ProviderType);
         }
         else if(user!=null){
           if(email!=null && !email.isBlank() && !email.equals(user.getUsername())){

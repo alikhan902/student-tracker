@@ -220,7 +220,8 @@ public class UserService {
                 user.getUsername(),
                 user.getEmail(),
                 user.getRoles(),
-                user.getProviderType()
+                user.getProviderType(),
+                user.getStudentType()
         );
     }
 }
