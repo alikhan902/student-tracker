@@ -30,15 +30,7 @@ public class GroupServiceImpl implements GroupService {
         return groupRepository.save(group);
     }
 
-    @Override
-    public Optional<Group> getGroupById(Long id) {
-        return groupRepository.findById(id);
-    }
 
-    @Override
-    public Optional<Group> getGroupByCode(String code) {
-        return groupRepository.findByCode(code);
-    }
 
     @Override
     public Optional<Group> getMyGroup() {

@@ -24,19 +24,7 @@ public class GroupController {
         return new ResponseEntity<>(group, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Group> getGroupById(@PathVariable Long id) {
-        return groupService.getGroupById(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
 
-    @GetMapping("/code/{code}")
-    public ResponseEntity<Group> getGroupByCode(@PathVariable String code) {
-        return groupService.getGroupByCode(code)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
 
     @GetMapping("/my-group")
     public ResponseEntity<GroupsAllDTO> getMyGroup() {
