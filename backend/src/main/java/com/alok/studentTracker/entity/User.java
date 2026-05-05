@@ -77,9 +77,9 @@ public class User implements UserDetails {
     @Builder.Default
     private Set<RoleType> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Builder.Default
-    private Set<GroupMembers> groupMemberships = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
+    private Group group;
 
 
     @Override
