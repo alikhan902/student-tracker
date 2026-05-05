@@ -24,8 +24,6 @@ public class GroupController {
         return new ResponseEntity<>(group, HttpStatus.CREATED);
     }
 
-
-
     @GetMapping("/my-group")
     public ResponseEntity<GroupsAllDTO> getMyGroup() {
         return groupService.getMyGroup()
