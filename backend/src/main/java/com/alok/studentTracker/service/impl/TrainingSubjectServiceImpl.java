@@ -2,9 +2,12 @@ package com.alok.studentTracker.service.impl;
 
 import com.alok.studentTracker.Repository.GroupRepository;
 import com.alok.studentTracker.Repository.TrainingSubjectRepository;
+import com.alok.studentTracker.Repository.UserRepository;
 import com.alok.studentTracker.dto.TrainingSubjectDTO;
 import com.alok.studentTracker.entity.Group;
 import com.alok.studentTracker.entity.TrainingSubject;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.alok.studentTracker.entity.User;
 import com.alok.studentTracker.service.TrainingSubjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,7 @@ public class TrainingSubjectServiceImpl implements TrainingSubjectService {
 
     private final TrainingSubjectRepository trainingSubjectRepository;
     private final GroupRepository groupRepository;
+    private final UserRepository userRepository;
 
     @Override
     public TrainingSubject createTrainingSubject(TrainingSubjectDTO trainingSubjectDTO) {
@@ -40,18 +44,20 @@ public class TrainingSubjectServiceImpl implements TrainingSubjectService {
     }
 
     @Override
-    public List<TrainingSubject> getTrainingSubjectsByGroupId(Long groupId) {
-        return trainingSubjectRepository.findByGroupId(groupId);
-    }
+    public List<TrainingSubject> getTrainingSubjectsByGroup() {
 
-    @Override
-    public List<TrainingSubject> getTrainingSubjectsByGroupIdOrderByCreatedAtDesc(Long groupId) {
-        return trainingSubjectRepository.findByGroupIdOrderByCreatedAtDesc(groupId);
-    }
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
 
-    @Override
-    public List<TrainingSubject> searchTrainingSubjectsByTitle(String title) {
-        return trainingSubjectRepository.findByTitleContainingIgnoreCase(title);
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (currentUser.getGroup() == null) {
+            throw new RuntimeException("User is not assigned to any group");
+        }
+
+        return trainingSubjectRepository.findByGroupId(currentUser.getGroup().getId());
     }
 
     @Override

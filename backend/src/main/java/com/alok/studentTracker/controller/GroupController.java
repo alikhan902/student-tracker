@@ -19,18 +19,14 @@ public class GroupController {
     private final GroupService groupService;
 
     @PostMapping
-    public ResponseEntity<Group> createGroup(@Valid @RequestBody GroupDTO groupDTO) {
+    public ResponseEntity<String> createGroup(@Valid @RequestBody GroupDTO groupDTO) {
         Group group = groupService.createGroup(groupDTO);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseEntity.ok("Group created successfully");
     }
 
     @GetMapping("/my-group")
     public ResponseEntity<GroupsAllDTO> getMyGroup() {
         return groupService.getMyGroup()
-                .map(g -> new GroupsAllDTO(
-                        g.getId(),
-                        g.getName()
-                ))
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -49,5 +45,25 @@ public class GroupController {
     public ResponseEntity<String> deleteGroup() {
         groupService.deleteGroup();
         return ResponseEntity.ok("Group deleted successfully");
+    }
+
+    @PutMapping("/add-student")
+    public ResponseEntity<String> addStudentToGroup(@PathVariable String username) {
+        try {
+            groupService.addStudentToGroup(username);
+            return ResponseEntity.ok("Student added to group successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/delete-student/{id}")
+    public ResponseEntity<String> deleteStudentFromGroup(@PathVariable Long id)  {
+        try {
+            groupService.deleteStudentFromGroup(id);
+            return ResponseEntity.ok("Student deleted from group successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

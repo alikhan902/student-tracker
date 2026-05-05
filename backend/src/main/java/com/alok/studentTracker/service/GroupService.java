@@ -1,6 +1,7 @@
 package com.alok.studentTracker.service;
 
 import com.alok.studentTracker.dto.GroupDTO;
+import com.alok.studentTracker.dto.Group.GroupsAllDTO;
 import com.alok.studentTracker.entity.Group;
 
 import java.util.Optional;
@@ -8,7 +9,10 @@ import java.util.Optional;
 public interface GroupService {
     Group createGroup(GroupDTO groupDTO);
 
-    Optional<Group> getMyGroup();
+    Optional<GroupsAllDTO> getMyGroup();
+
     Group updateGroup(GroupDTO groupDTO);
     void deleteGroup();
+    void addStudentToGroup(String username);
+    void deleteStudentFromGroup(Long studentId);
 }

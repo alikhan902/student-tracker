@@ -22,7 +22,7 @@ public class Group {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
     @Builder.Default
     private Set<User> users = new HashSet<>();
 

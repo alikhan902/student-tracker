@@ -9,9 +9,7 @@ import java.util.Optional;
 public interface TrainingSubjectService {
     TrainingSubject createTrainingSubject(TrainingSubjectDTO trainingSubjectDTO);
     Optional<TrainingSubject> getTrainingSubjectById(Long id);
-    List<TrainingSubject> getTrainingSubjectsByGroupId(Long groupId);
-    List<TrainingSubject> getTrainingSubjectsByGroupIdOrderByCreatedAtDesc(Long groupId);
-    List<TrainingSubject> searchTrainingSubjectsByTitle(String title);
+    List<TrainingSubject> getTrainingSubjectsByGroup();
     TrainingSubject updateTrainingSubject(Long id, TrainingSubjectDTO trainingSubjectDTO);
     void deleteTrainingSubject(Long id);
 }
