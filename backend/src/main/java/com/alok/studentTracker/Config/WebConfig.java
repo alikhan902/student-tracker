@@ -41,16 +41,16 @@ public class WebConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/oauth2/**").permitAll()
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs.yaml"
+                        ).permitAll()
                         .requestMatchers("/auditor/**").hasAnyRole(AUDITOR.name(), ADMIN.name())
                         .requestMatchers("/users/**").hasAnyRole(USER.name(), ADMIN.name())
                         .requestMatchers("/api/**").authenticated()
-                        .requestMatchers(
-                                        "/api/auth/**",
-                                        "/swagger-ui/**",
-                                        "/swagger-ui.html",
-                                        "/v3/api-docs/**",
-                                        "/v3/api-docs.yaml"
-                                ).permitAll()
                         .anyRequest().authenticated())
 
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

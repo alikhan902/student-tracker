@@ -95,13 +95,13 @@ public class GroupServiceImpl implements GroupService {
 
         User currentUser = validationService.validateHeadmanAccess(group.getId());
 
-        // List<User> users = userRepository.findAllByGroup(group);
+        List<User> users = userRepository.findAllByGroup(group);
 
-        // for (User user : users) {
-        //     user.setGroup(null);
-        // }
+        for (User user : users) {
+            user.setGroup(null);
+        }
 
-        // userRepository.saveAll(users);
+        userRepository.saveAll(users);
 
         groupRepository.delete(group);
     }
