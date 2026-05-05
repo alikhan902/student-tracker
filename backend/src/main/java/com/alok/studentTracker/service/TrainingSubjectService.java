@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TrainingSubjectService {
+    TrainingSubject createTrainingSubjectWithPhoto(com.alok.studentTracker.dto.TrainingSubjectUploadDTO trainingSubjectUploadDTO, org.springframework.web.multipart.MultipartFile photo);
+    TrainingSubject updateTrainingSubjectWithPhoto(Long id, com.alok.studentTracker.dto.TrainingSubjectUploadDTO trainingSubjectUploadDTO, org.springframework.web.multipart.MultipartFile photo);
     TrainingSubject createTrainingSubject(TrainingSubjectDTO trainingSubjectDTO);
     Optional<TrainingSubject> getTrainingSubjectById(Long id);
     List<TrainingSubject> getTrainingSubjectsByGroup();

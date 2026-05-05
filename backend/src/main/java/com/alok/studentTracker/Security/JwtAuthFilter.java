@@ -7,10 +7,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -22,43 +20,62 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
+
     private final UserRepository userRepository;
     private final AuthUtil authUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-         log.info("Incoming request: {}",request.getRequestURI());
-
+    protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        log.info("Incoming request: {}", path);
-        if (path.startsWith("/oauth2") ||
-                path.startsWith("/login") ||
-                path.startsWith("/auth") ||
-                path.startsWith("/error")) {
 
+        return path.startsWith("/oauth2") ||
+               path.startsWith("/login") ||
+               path.startsWith("/auth") ||
+               path.startsWith("/error") ||
+               path.startsWith("/swagger-ui") ||
+               path.startsWith("/v3/api-docs") ||
+               path.startsWith("/training-subjects");
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+
+        log.info("JWT Filter request: {}", request.getRequestURI());
+
+        final String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
-         final String requestTokenGenerator=request.getHeader("Authorization");
-         if(requestTokenGenerator ==null || !requestTokenGenerator.startsWith("Bearer ")){
-             filterChain.doFilter(request,response);
-             return;
-         }
-        String token = requestTokenGenerator.substring(7);
-         String Username=authUtil.findUsernameFromToken(token);
-          log.info("Extracted username from token: {}",Username);
-         if(Username !=null && SecurityContextHolder.getContext().getAuthentication()==null){
-             User user= userRepository.findByUsername(Username).orElse(null);
-           UserPrinciple userPrinciple = new UserPrinciple(user);
-             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken=
-                     new UsernamePasswordAuthenticationToken(userPrinciple,null,userPrinciple.getAuthorities());
-             SecurityContextHolder.getContext()
-                     .setAuthentication(usernamePasswordAuthenticationToken);
 
-         }
-         filterChain.doFilter(request,response);
+        try {
+            String token = authHeader.substring(7);
+            String username = authUtil.findUsernameFromToken(token);
+
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                User user = userRepository.findByUsername(username).orElse(null);
+
+                if (user != null) {
+                    UserPrinciple userPrinciple = new UserPrinciple(user);
+
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userPrinciple,
+                                    null,
+                                    userPrinciple.getAuthorities()
+                            );
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("JWT authentication error: {}", e.getMessage());
+        }
+
+        filterChain.doFilter(request, response);
     }
 }
-
-
-
