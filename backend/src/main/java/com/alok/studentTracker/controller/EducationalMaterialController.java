@@ -82,12 +82,12 @@ public class EducationalMaterialController {
     }
 
     // списки: по ID предмета (trainingSubjectId)
-    @GetMapping("/")
+    @GetMapping("/subject/{id}")
     public ResponseEntity<List<EducationalMaterialAllDTO>> getByTrainingSubjectId(
-            @RequestParam("trainingSubjectId") Long trainingSubjectId
+            @PathVariable Long id
     ) {
         return ResponseEntity.ok(
-                educationalMaterialService.getEducationalMaterialsByTrainingSubjectId(trainingSubjectId)
+                educationalMaterialService.getEducationalMaterialsByTrainingSubjectId(id)
         );
     }
 

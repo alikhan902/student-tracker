@@ -87,7 +87,7 @@ public class TrainingSubjectController {
     }
 
 
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<List<TrainingSubjectAllDTO>> searchTrainingSubjects() {
         List<TrainingSubjectAllDTO> trainingSubjects =
                 trainingSubjectService.getTrainingSubjectsByGroup()
