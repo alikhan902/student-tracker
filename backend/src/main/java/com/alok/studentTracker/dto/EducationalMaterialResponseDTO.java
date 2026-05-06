@@ -17,8 +17,5 @@ public class EducationalMaterialResponseDTO {
 
     private String filePath;
     private String originalFileName;
-
-    private LocalDateTime uploadedAt;
-    private LocalDateTime updatedAt;
 }
 

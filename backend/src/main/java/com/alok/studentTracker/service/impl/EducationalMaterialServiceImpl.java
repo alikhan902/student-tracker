@@ -120,9 +120,7 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
                         m.getTitle(),
                         m.getDescription(),
                         m.getFilePath(),
-                        m.getOriginalFileName(),
-                        m.getUploadedAt(),
-                        m.getUpdatedAt()
+                        m.getOriginalFileName()
                 ));
     }
 
@@ -130,7 +128,13 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
     public List<EducationalMaterialAllDTO> getEducationalMaterialsByTrainingSubjectId(Long trainingSubjectId) {
         return educationalMaterialRepository.findByTrainingSubjectId(trainingSubjectId)
                 .stream()
-                .map(m -> new EducationalMaterialAllDTO(m.getId(), m.getTitle(), m.getFilePath()))
+                .map(m -> new EducationalMaterialAllDTO(
+                        m.getId(),
+                        m.getTitle(),
+                        m.getDescription(),
+                        m.getFilePath(),
+                        m.getOriginalFileName()
+                ))
                 .toList();
     }
 
