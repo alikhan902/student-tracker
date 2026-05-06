@@ -37,15 +37,21 @@ public class OAuth2successHandler implements AuthenticationSuccessHandler {
 
             LoginResponseDTO body = loginResponse.getBody();
 
-            String redirectUrl = "http://localhost:5173/oauth2/redirect"
+            String frontendUrl = System.getenv().getOrDefault("APP_FRONTEND_URL", "http://localhost");
+            if (!frontendUrl.endsWith("/")) {
+                frontendUrl = frontendUrl + "/";
+            }
+
+            String redirectUrl = frontendUrl + "oauth2/redirect"
                     + "?token=" + body.getAccessToken()
                     + "&userId=" + body.getUserId();
+
 
             response.sendRedirect(redirectUrl);
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("http://localhost:5173/login?error=oauth_failed");
+            response.sendRedirect("http://localhost/login?error=oauth_failed");
         }
     }
 }

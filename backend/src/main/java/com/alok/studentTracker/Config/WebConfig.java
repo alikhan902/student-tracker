@@ -61,7 +61,7 @@ public class WebConfig {
                         .successHandler(oAuth2successHandler)
                         .failureHandler((request, response, exception) -> {
                             log.error("OAuth2 login failed: {}", exception.getMessage());
-                            response.sendRedirect("http://localhost:5173/login?error=oauth2");
+                            response.sendRedirect("http://localhost/login?error=oauth2");
                         }))
 
                 .exceptionHandling(ex -> ex
