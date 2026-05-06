@@ -1,12 +1,16 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+export const API_URL = '/api';
+export const AUTH_URL = '/auth';
+export const FILES_URL = 'http://localhost:8080';
+
 const api = axios.create({
-  baseURL: '/api' // Uses proxy in vite config
+  baseURL: API_URL // Uses proxy in vite config
 });
 
 const authApi = axios.create({
-  baseURL: '/auth' // For signup/login
+  baseURL: AUTH_URL // For signup/login
 });
 
 // Request interceptor to attach token
@@ -59,11 +63,17 @@ export const groupService = {
 }
 
 export const subjectService = {
-  createGroup: (groupName) => api.post('/groups', groupName),
-  getMyGroup: () => api.get(`/groups/my-group`),
-  addUserToGroup: (username) => api.put(`/groups/add-student/${username}`),
-  deleteUserFromGroup: (id) => api.delete(`/groups/delete-student/${id}`),
-  deleteGroup: () => api.delete(`/groups`)
+  getSubjects: () => api.get('/training-subjects/'),
+  getSubject: (id) => api.get(`/training-subjects/${id}`),
+  createSubject: (subjectData) => api.post('/training-subjects', subjectData),
+  deleteSubject: (id) => api.delete(`/training-subjects/${id}`),
+}
+
+export const educationalMaterialService = {
+  getMaterials: (id) => api.get(`/educational-materials/${id}`),
+  createMaterial: (materialData) => api.post('/educational-materials', materialData),
+  updateMaterial: (id, materialData) => api.put(`/educational-materials/${id}`, materialData),
+  deleteMaterial: (id) => api.delete(`/educational-materials/${id}`),
 }
 
 export default api;

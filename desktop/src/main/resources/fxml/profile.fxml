@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20" stylesheets="@css/profile.css" styleClass="root-container">
+
+    <!-- Title -->
+    <Label text="Профиль аккаунта" styleClass="page-title"/>
+
+    <!-- Profile Card -->
+    <VBox styleClass="card">
+        <HBox spacing="20" alignment="CENTER_LEFT">
+
+            <!-- Avatar -->
+            <StackPane styleClass="avatar">
+                <Label text="U" styleClass="avatar-text"/>
+            </StackPane>
+
+            <!-- Info -->
+            <VBox spacing="5" HBox.hgrow="ALWAYS">
+                <Label text="User Name" styleClass="user-name"/>
+                <Label text="@username" styleClass="username"/>
+
+                <HBox spacing="10" styleClass="tags">
+                    <Label text="email@example.com" styleClass="tag"/>
+                    <Label text="LOCAL" styleClass="tag provider"/>
+                    <Label text="СТУДЕНТ" styleClass="tag role"/>
+                </HBox>
+            </VBox>
+
+            <!-- Buttons -->
+            <VBox spacing="10" styleClass="actions">
+                <Button text="Редактировать профиль" styleClass="btn"/>
+                <Button text="Сменить пароль" styleClass="btn"/>
+                <Button text="Создать группу" styleClass="btn secondary"/>
+            </VBox>
+
+        </HBox>
+    </VBox>
+
+    <!-- Change Email -->
+    <VBox styleClass="card">
+        <Label text="Сменить email" styleClass="section-title"/>
+        <Label text="Вы должны подтвердить новый email..." styleClass="text-muted"/>
+
+        <HBox spacing="10">
+            <TextField promptText="Введите новый email" HBox.hgrow="ALWAYS"/>
+            <Button text="Запросить смену email" styleClass="btn primary"/>
+        </HBox>
+    </VBox>
+
+    <!-- Danger Zone -->
+    <VBox styleClass="danger-card">
+        <Label text="Опасная зона" styleClass="danger-title"/>
+        <Label text="После удаления аккаунта восстановить его будет невозможно." styleClass="text-muted"/>
+
+        <Button text="Удалить аккаунт" styleClass="btn danger"/>
+    </VBox>
+
+</VBox>

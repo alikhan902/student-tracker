@@ -33,7 +33,19 @@ function App() {
     
     <Route element={<PrivateRoute />}>
       <Route element={<Layout />}>
-        <Route path="/subjects" element={<SubjectPage />} />
+        <Route path="/subjects" element={<SubjectSelectionPage />} />
+      </Route>
+    </Route>
+
+    <Route element={<PrivateRoute />}>
+      <Route element={<Layout />}>
+        <Route path="/subjects/:id" element={<SubjectPage />} />
+      </Route>
+    </Route>
+
+    <Route element={<PrivateRoute />}>
+      <Route element={<Layout />}>
+        <Route path="/groups" element={<GroupPage />} />
       </Route>
     </Route>
 

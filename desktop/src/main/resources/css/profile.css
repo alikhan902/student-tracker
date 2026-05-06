@@ -1,0 +1,128 @@
+.root-container {
+    -fx-padding: 20;
+    -fx-background-color: #f5f7fb;
+}
+
+/* TITLE */
+.page-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+}
+
+/* CARD */
+.card {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #dbeafe;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+/* AVATAR */
+.avatar {
+    -fx-min-width: 80;
+    -fx-min-height: 80;
+    -fx-background-color: #3b82f6;
+    -fx-background-radius: 50;
+    -fx-alignment: center;
+}
+
+.avatar-text {
+    -fx-text-fill: white;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+/* USER INFO */
+.user-name {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.username {
+    -fx-text-fill: #3b82f6;
+}
+
+/* TAGS */
+.tags {
+    -fx-padding: 5 0 0 0;
+}
+
+.tag {
+    -fx-background-color: #eef2ff;
+    -fx-text-fill: #374151;
+    -fx-padding: 4 10;
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+}
+
+.provider {
+    -fx-background-color: #e0f2fe;
+}
+
+.role {
+    -fx-background-color: #dcfce7;
+}
+
+/* BUTTONS */
+.btn {
+    -fx-background-color: #eef2ff;
+    -fx-text-fill: #111827;
+    -fx-padding: 8 12;
+    -fx-background-radius: 8;
+}
+
+.btn:hover {
+    -fx-background-color: #dbeafe;
+}
+
+.primary {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+}
+
+.primary:hover {
+    -fx-background-color: #2563eb;
+}
+
+.secondary {
+    -fx-background-color: #f3f4f6;
+}
+
+/* SECTION */
+.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* TEXT */
+.text-muted {
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 12px;
+}
+
+/* DANGER */
+.danger-card {
+    -fx-background-color: #fef2f2;
+    -fx-border-color: #fecaca;
+    -fx-padding: 20;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+}
+
+.danger-title {
+    -fx-text-fill: #dc2626;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.danger {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+}
+
+.danger:hover {
+    -fx-background-color: #dc2626;
+}

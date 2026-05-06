@@ -2,7 +2,7 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 
-export const SubjectSection = ({ title, description, originalFileName, uploadAt, fileDownloadUrl }) => {
+export const SubjectSection = ({ title, description, originalFileName, uploadAt, fileDownloadUrl, OnDelete }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
