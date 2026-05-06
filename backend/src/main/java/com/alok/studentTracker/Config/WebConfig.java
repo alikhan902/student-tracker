@@ -49,6 +49,7 @@ public class WebConfig {
                                 "/v3/api-docs.yaml"
                         ).permitAll()
                         .requestMatchers("/uploads/training-subjects/**").permitAll()
+                        .requestMatchers("/uploads/educational-materials/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/auditor/**").hasAnyRole(AUDITOR.name(), ADMIN.name())
                         .requestMatchers("/users/**").hasAnyRole(USER.name(), ADMIN.name())

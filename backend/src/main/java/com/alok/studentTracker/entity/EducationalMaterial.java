@@ -26,9 +26,6 @@ public class EducationalMaterial {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // Предмет (математика, физика...)
-    @Column(nullable = false)
-    private String subject;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_subject_id", nullable = false)
