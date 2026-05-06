@@ -1,13 +1,19 @@
 import toast from 'react-hot-toast';
-import {FILES_URL} from '../../api';
+import { useEffect, useState } from 'react';
 
 export const SubjectCard = ({ title, url, onClick, isDeleteVisible, onDelete }) => {
   
+  const [img, setImage] = useState(null);
+
+  useEffect(() => {
+    console.log(url);
+  }, [url]);
+
   return (
     <div onClick={onClick} className="group relative w-full h-[200px] rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1">
       
       <img
-        src={FILES_URL + url}
+        src={url}
         alt={title}
         className="absolute inset-0 w-full h-full object-cover duration-500"
       />

@@ -105,7 +105,7 @@ export default function SubjectSelectionPage() {
                     }}/>
                 ))}
 
-                {user.studentType == "HEADMAN" && 
+                {user.studentType == "HEADMAN" && (user.groupId != null) && 
                 <div onClick={() => setIsCreateSubject(true)} className="group relative w-full h-[200px] rounded-2xl overflow-hidden bg-white shadow-md border-[4px] border-dashed border-[rgb(57,135,250)] cursor-pointer hover:border-[rgb(0,100,200)] duration-300">
                     <Plus className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[rgb(57,135,250)] group-hover:text-[rgb(0,100,200)] duration-300" size={48}/>
                 </div>}

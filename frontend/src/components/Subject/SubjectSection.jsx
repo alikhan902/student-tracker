@@ -1,9 +1,40 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 
-export const SubjectSection = ({ title, description, originalFileName, uploadAt, fileDownloadUrl, OnDelete }) => {
+export const SubjectSection = ({ title, description, originalFileName, uploadAt, fileDownloadUrl, isSettingsVisible, OnDelete, OnChange }) => {
     const [isOpen, setIsOpen] = useState(false);
+
+
+    const handleDownloadFile = async (fileUrl, fileName) => {
+        try {
+            const response = await axios.get(fileUrl, {
+                responseType: 'blob',
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            });
+
+            const blobUrl = window.URL.createObjectURL(response.data);
+
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.setAttribute('download', fileName);
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            window.URL.revokeObjectURL(blobUrl);
+
+            toast.success("Файл скачан");
+
+        } catch (error) {
+            console.error('Ошибка скачивания:', error);
+            toast.error("Ошибка скачивания файла");
+        }
+    };
 
     return (
         <div className="bg-white border border-lightblue-border rounded-2xl shadow-sm transition-all duration-300">
@@ -37,15 +68,37 @@ export const SubjectSection = ({ title, description, originalFileName, uploadAt,
                     <button
                     onClick={(e) => {
                         e.stopPropagation();
-                        toast.success("Загрузка файла...");
-                        window.open(fileDownloadUrl, '_blank');
+                        handleDownloadFile(fileDownloadUrl, originalFileName);
                     }}
                     className="text-xs bg-primary text-white px-3 py-1.5 rounded-md hover:bg-primary-hover transition-colors"
                     >
-                    Загрузить
+                        Загрузить
                     </button>
-                </div>
 
+                {isSettingsVisible && (   
+                    <>
+                        <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onChange();
+                        }}
+                        className="text-xs bg-primary text-white px-3 py-1.5 rounded-md hover:bg-primary-hover transition-colors"
+                        >
+                            Изменить
+                        </button>
+
+                        <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete();
+                        }}
+                        className="text-xs bg-primary text-white px-3 py-1.5 rounded-md bg-red-500 hover:bg-red-600 transition-colors"
+                        >
+                            Удалить
+                        </button>
+                    </>
+                )}
+                </div>
                 <div className="absolute inset-0 rounded-2xl ring-1 ring-transparent group-hover:ring-primary transition pointer-events-none" />
             </div>
         </div>

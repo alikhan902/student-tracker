@@ -3,7 +3,6 @@ import toast from 'react-hot-toast';
 
 export const API_URL = '/api';
 export const AUTH_URL = '/auth';
-export const FILES_URL = 'http://localhost:8080';
 
 const api = axios.create({
   baseURL: API_URL // Uses proxy in vite config
@@ -63,14 +62,14 @@ export const groupService = {
 }
 
 export const subjectService = {
-  getSubjects: () => api.get('/training-subjects/'),
+  getSubjects: () => api.get('/training-subjects'),
   getSubject: (id) => api.get(`/training-subjects/${id}`),
   createSubject: (subjectData) => api.post('/training-subjects', subjectData),
   deleteSubject: (id) => api.delete(`/training-subjects/${id}`),
 }
 
 export const educationalMaterialService = {
-  getMaterials: (id) => api.get(`/educational-materials/${id}`),
+  getMaterials: (id) => api.get(`/educational-materials/subject/${id}`),
   createMaterial: (materialData) => api.post('/educational-materials', materialData),
   updateMaterial: (id, materialData) => api.put(`/educational-materials/${id}`, materialData),
   deleteMaterial: (id) => api.delete(`/educational-materials/${id}`),
