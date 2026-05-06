@@ -1,4 +1,4 @@
-import axios, { create } from 'axios';
+import axios from 'axios';
 import toast from 'react-hot-toast';
 
 const api = axios.create({

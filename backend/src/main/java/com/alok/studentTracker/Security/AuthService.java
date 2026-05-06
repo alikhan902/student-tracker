@@ -106,7 +106,7 @@ public class AuthService {
         if(user==null && EmailUser==null){
 
             String userName=authUtil.determineUsernameFromOAuth2User(oAuth2User,registrationId,ProviderId);
-            user=SignUpInternal(new SignupRequestDTO(userName,null,name,null), ProviderId,ProviderType);
+            user=SignUpInternal(new SignupRequestDTO(userName,null,name, StudentType.STANDARD), ProviderId,ProviderType);
         }
         else if(user!=null){
           if(email!=null && !email.isBlank() && !email.equals(user.getUsername())){
