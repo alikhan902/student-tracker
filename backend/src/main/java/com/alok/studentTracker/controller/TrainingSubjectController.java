@@ -2,7 +2,8 @@ package com.alok.studentTracker.controller;
 
 import com.alok.studentTracker.dto.TrainingSubjectAllDTO;
 import com.alok.studentTracker.dto.TrainingSubjectUploadDTO;
-import com.alok.studentTracker.entity.TrainingSubject;
+import com.alok.studentTracker.dto.TrainingSubjectResponseDTO;
+
 import com.alok.studentTracker.service.TrainingSubjectService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
@@ -79,11 +80,12 @@ public class TrainingSubjectController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TrainingSubject> getTrainingSubjectById(@PathVariable Long id) {
+    public ResponseEntity<TrainingSubjectResponseDTO> getTrainingSubjectById(@PathVariable Long id) {
         return trainingSubjectService.getTrainingSubjectById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
 
     @GetMapping("/")
     public ResponseEntity<List<TrainingSubjectAllDTO>> searchTrainingSubjects() {

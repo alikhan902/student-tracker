@@ -10,6 +10,9 @@ import com.alok.studentTracker.dto.TrainingSubjectDTO;
 import com.alok.studentTracker.entity.Group;
 import com.alok.studentTracker.entity.TrainingSubject;
 import com.alok.studentTracker.dto.TrainingSubjectUploadDTO;
+import com.alok.studentTracker.dto.TrainingSubjectResponseDTO;
+
+import com.alok.studentTracker.service.TrainingSubjectService; 
 import com.alok.studentTracker.service.FileService;
 import com.alok.studentTracker.service.TrainingSubjectService;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,9 +79,18 @@ public class TrainingSubjectServiceImpl implements TrainingSubjectService {
     }
 
     @Override
-    public Optional<TrainingSubject> getTrainingSubjectById(Long id) {
-        return trainingSubjectRepository.findById(id);
+    public Optional<TrainingSubjectResponseDTO> getTrainingSubjectById(Long id) {
+        return trainingSubjectRepository.findById(id)
+                .map(subject -> new TrainingSubjectResponseDTO(
+                        subject.getId(),
+                        subject.getTitle(),
+                        subject.getDescription(),
+                        subject.getPhotoUrl(),
+                        subject.getCreatedAt(),
+                        subject.getUpdatedAt()
+                ));
     }
+
 
     @Override
     public List<TrainingSubject> getTrainingSubjectsByGroup() {
