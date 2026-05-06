@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { userService } from '../api';
+import { groupService, userService } from '../api';
 import { Modal } from '../components/ui/Modal';
-import { User, Mail, Shield, Key, Trash2 } from 'lucide-react';
+import { User, Mail, Shield, Key, Trash2, Group } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function ProfilePage() {
   const { user, setUser, logout } = useAuth();
   
+ // Create group state
+  const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
+  const [groupName, setGroupName] = useState('');
+
   // Update Profile State
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [profileData, setProfileData] = useState({ name: user?.name || '' });
@@ -31,8 +35,8 @@ export default function ProfilePage() {
 
   const getRoleColor = (role) => {
     switch(role) {
-      case "STUDENT": return 'bg-amber-500/20 text-amber-500 border-amber-500/30';
-      case "HEADMEN": return 'bg-blue-500/20 text-blue-500 border-blue-500/30';
+      case "HEADMAN": return 'bg-amber-500/20 text-amber-500 border-amber-500/30';
+      case "STANDARD": return 'bg-green-500/20 text-green-500 border-green-500/30';
       default: return 'bg-gray-500/20 text-gray-500 border-gray-500/30';
     }
   };
@@ -43,6 +47,21 @@ export default function ProfilePage() {
       case 'GOOGLE': return 'bg-blue-600 text-white';
       case 'GITHUB': return 'bg-purple-600 text-white';
       default: return 'bg-gray-200 text-gray-700';
+    }
+  };
+
+  const handleCreateGroup = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await groupService.createGroup({ name: groupName });
+      toast.success('Группа успешно создана');
+      setIsCreateGroupModalOpen(false);
+      setGroupName('');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Не удалось создать группу');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -131,7 +150,7 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <div className="space-y-6 max-w-4xl slide-up">
+    <div className="space-y-6 w-full slide-up">
       <h1 className="text-2xl font-bold font-heading text-gray-900">Профиль аккаунта</h1>
 
       <div className="bg-white border border-lightblue-border rounded-xl p-6 sm:p-8 shadow-sm">
@@ -152,9 +171,8 @@ export default function ProfilePage() {
                 {user.providerType || 'LOCAL'}
               </span>
               <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide flex items-center ${getRoleColor(user.studentType)}`}>
-                {user.studentType === 0 ? 'Пользователь' : user.studentType === 1 ? 'Администратор' : 'Роль не указана'}
+                {user.studentType === "HEADMAN" ? "Староста" : "Студент"}
               </span>
-              <Shield className={`w-4 h-4 text-gray-500 ${getRoleColor(user.studentType)}`} onClick={console.log(user.studentType)}/>
             </div>
           </div>
           
@@ -174,6 +192,14 @@ export default function ProfilePage() {
             >
               <Key className="w-4 h-4 mr-2" /> Сменить пароль
             </button>
+            {user.studentType === 'HEADMAN' && (
+              <button 
+                onClick={() => setIsCreateGroupModalOpen(true)}
+                className="bg-lightblue-surface hover:bg-lightblue-border text-gray-900 text-sm font-medium py-2 px-4 rounded-lg transition-colors border border-lightblue-border flex justify-center items-center"
+              >
+                <Group className="w-4 h-4 mr-2" /> Создать группу
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -216,6 +242,20 @@ export default function ProfilePage() {
           <Trash2 className="w-4 h-4 mr-2" /> Удалить аккаунт
         </button>
       </div>
+
+      {/* Create group */}
+      <Modal isOpen={isCreateGroupModalOpen} onClose={() => setIsCreateGroupModalOpen(false)} title="Создать группу">
+        <form onSubmit={handleCreateGroup} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Название группы</label>
+            <input type="text" required value={groupName} onChange={(e) => setGroupName(e.target.value)} className="w-full px-3 py-2 bg-lightblue-surface border border-lightblue-border rounded-lg text-gray-900 focus:outline-none focus:ring-1 focus:ring-primary" />
+          </div>
+          <div className="flex justify-end gap-2 pt-4 border-t border-lightblue-border mt-4">
+             <button type="button" onClick={() => setIsCreateGroupModalOpen(false)} className="px-4 py-2 text-gray-500 hover:text-gray-900">Отмена</button>
+             <button type="submit" disabled={loading} className="px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg disabled:opacity-50 font-medium">Создать группу</button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Edit Profile Modal */}
       <Modal isOpen={isEditProfileModalOpen} onClose={() => setIsEditProfileModalOpen(false)} title="Редактировать профиль">

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { create } from 'axios';
 import toast from 'react-hot-toast';
 
 const api = axios.create({
@@ -13,8 +13,6 @@ const authApi = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken');
-
-    console.log("TOKEN SENT:", token); // debug
 
     if (token) {
       config.headers = {
@@ -49,7 +47,23 @@ export const userService = {
   changePassword: (data) => api.put('/users/change-password', data),
   forgotPassword: (email) => api.post(`/users/forgot-password?email=${email}`),
   resetPassword: (token, newPassword) => api.post(`/users/reset-password?token=${token}&newPassword=${newPassword}`),
-  deleteAccount: (password) => api.delete(password ? `/users/delete?password=${password}` : '/users/delete'),
+  deleteAccount: (password) => api.delete(password ? `/users/delete?password=${password}` : '/users/delete')
 };
+
+export const groupService = {
+  createGroup: (groupName) => api.post('/groups', groupName),
+  getMyGroup: () => api.get(`/groups/my-group`),
+  addUserToGroup: (username) => api.put(`/groups/add-student/${username}`),
+  deleteUserFromGroup: (id) => api.delete(`/groups/delete-student/${id}`),
+  deleteGroup: () => api.delete(`/groups`)
+}
+
+export const subjectService = {
+  createGroup: (groupName) => api.post('/groups', groupName),
+  getMyGroup: () => api.get(`/groups/my-group`),
+  addUserToGroup: (username) => api.put(`/groups/add-student/${username}`),
+  deleteUserFromGroup: (id) => api.delete(`/groups/delete-student/${id}`),
+  deleteGroup: () => api.delete(`/groups`)
+}
 
 export default api;

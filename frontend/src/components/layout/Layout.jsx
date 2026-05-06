@@ -10,7 +10,7 @@ export const Layout = () => {
     <div className="flex h-screen bg-white text-gray-900 overflow-hidden font-body">
       <Sidebar isOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
       
-      <div className={`flex-1 flex flex-col relative transition-transform duration-300 ease-in-out ${mobileMenuOpen ? 'translate-x-[260px]' : 'translate-x-0'}`}>
+      <div className={`flex-1 flex flex-col relative`}>
         <header className="bg-white border-b border-lightblue-border h-16 flex items-center px-4 shrink-0">
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -22,7 +22,7 @@ export const Layout = () => {
         </header>
 
         <main className="flex-1 overflow-auto scrollbar-custom p-4 md:p-8">
-          <div className="max-w-6xl mx-auto h-full slide-up">
+          <div className="max-w-7xl mx-auto h-full slide-up">
             <Outlet />
           </div>
         </main>

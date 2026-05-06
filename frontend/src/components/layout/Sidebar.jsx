@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 const NAV_ITEMS_PROFILE = [
   { path: '/profile', label: 'Профиль', icon: UserCircle },
   { path: '/subjects', label: 'Предметы', icon: UserCircle },
+  { path: '/groups', label: 'Группа', icon: UserCircle },
 ];
 
 export const Sidebar = ({ isOpen, setMobileMenuOpen }) => {

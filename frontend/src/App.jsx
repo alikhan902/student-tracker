@@ -12,6 +12,7 @@ import ProfilePage from './pages/ProfilePage';
 import OAuthRedirect from './pages/OAuthRedirect';
 import SubjectSelectionPage from './pages/SubjectsSelectionPage';
 import SubjectPage from './pages/SubjectPage';
+import GroupPage from './pages/GroupPage';
 
 function App() {
   return (<Routes>
@@ -33,6 +34,12 @@ function App() {
     <Route element={<PrivateRoute />}>
       <Route element={<Layout />}>
         <Route path="/subjects" element={<SubjectPage />} />
+      </Route>
+    </Route>
+
+        <Route element={<PrivateRoute />}>
+      <Route element={<Layout />}>
+        <Route path="/groups" element={<GroupPage />} />
       </Route>
     </Route>
 
