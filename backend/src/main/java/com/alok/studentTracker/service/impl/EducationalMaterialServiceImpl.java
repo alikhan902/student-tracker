@@ -81,8 +81,14 @@ public class EducationalMaterialServiceImpl implements EducationalMaterialServic
             throw new RuntimeException("You are not member of this group");
         }
 
-        material.setTitle(dto.getTitle());
-        material.setDescription(dto.getDescription());
+        // optional fields on update
+        if (dto.getTitle() != null) {
+            material.setTitle(dto.getTitle());
+        }
+        if (dto.getDescription() != null) {
+            material.setDescription(dto.getDescription());
+        }
+
 
         if (dto.getTrainingSubjectId() != null && !dto.getTrainingSubjectId().equals(material.getTrainingSubject().getId())) {
             TrainingSubject newTs = trainingSubjectRepository.findById(dto.getTrainingSubjectId())

@@ -27,10 +27,10 @@ public class App extends Application {
     @Override
     public void start(Stage pStage) throws Exception  {
         stage = pStage;
-        Parent root = loadFXML("profile.fxml");
+        Parent root = loadFXML("layout.fxml");
         Scene scene = new Scene(root, 1024, 568);
         scene.getStylesheets().add(
-            getClass().getResource("/css/profile.css").toExternalForm()
+            getClass().getResource("/css/layout.css").toExternalForm()
         );
         stage.setScene(scene);
         stage.show();
