@@ -34,7 +34,7 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 8963Aa
       FILE_UPLOAD_DIR: uploads
-      APP_FRONTEND_URL: http://localhost:5173/
+      APP_FRONTEND_URL: http://localhost/
     volumes:
       - ./backend/uploads:/app/uploads
       - ./backend:/app
