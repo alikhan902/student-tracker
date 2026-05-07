@@ -6,9 +6,12 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { Plus } from 'lucide-react';
 import { Modal } from '../components/ui/Modal';
+import { useAuth } from '../context/AuthContext';
 
 export default function SubjectPage() {
  
+    const { user, setUser, logout } = useAuth();
+
     const navigate = useNavigate();
 
     const id = useParams().id;
@@ -55,8 +58,8 @@ export default function SubjectPage() {
             toast.error('Пожалуйста, заполните все поля и выберите файл.');
             return;
         }
-        if(materialFile.size > 1 * 1024 * 1024) {
-            toast.error('Размер файла не должен превышать 1 МБ.');
+        if(materialFile.size > 10 * 1024 * 1024) {
+            toast.error('Размер файла не должен превышать 10 МБ.');
             return;
         }
         setLoading(true);
@@ -82,11 +85,11 @@ export default function SubjectPage() {
 
     const handleUpdateMaterial = async (e) => {
         e.preventDefault();
-        if(!materialTitle || !materialDescription || !materialFile) {
+        if(!materialTitle || !materialDescription) {
             toast.error('Пожалуйста, заполните все поля и выберите файл.');
             return;
         }
-        if(materialFile.size > 1 * 1024 * 1024) {
+        if(materialFile && materialFile.size > 1 * 1024 * 1024) {
             toast.error('Размер файла не должен превышать 1 МБ.');
             return;
         }
@@ -107,7 +110,7 @@ export default function SubjectPage() {
             toast.error('Ошибка при обновлении материала. Пожалуйста, попробуйте снова.');
         } finally {
             setLoading(false);
-            setIsCreateMaterial(false);
+            setIsUpdateMaterial(false);
         }
     }
 
@@ -139,17 +142,19 @@ export default function SubjectPage() {
             <div className="flex flex-col gap-6">
                 {materials?.map((material) => (
                 <SubjectSection key={material.title} title={material.title} description={material.description} originalFileName={material.originalFileName} uploadAt={material.uploadAt} fileDownloadUrl={material.filePath} 
-                onDelete={() => {
+                OnDelete={() => {
                     setSelectedMaterial(material);
                     setIsDeleteMaterial(true);
                 }}
                 
-                onChange={() => {
+                OnChanges={() => {
                     setSelectedMaterial(material);
                     setMaterialTitle(material.title);
                     setMaterialDescription(material.description);
-                    setIsCreateMaterial(true);
+                    setIsUpdateMaterial(true);
                 }}
+
+                isSettingsVisible={user.studentType == "HEADMAN"}
                 />
                 ))}
     
@@ -194,7 +199,7 @@ export default function SubjectPage() {
                 </form>
             </Modal>
 
-                        <Modal isOpen={isUpdateMaterial} onClose={() => setIsUpdateMaterial(false)} title="Создать материал">
+            <Modal isOpen={isUpdateMaterial} onClose={() => setIsUpdateMaterial(false)} title="Обновить материал">
                 <form onSubmit={(e) => handleUpdateMaterial(e)} className="space-y-4">
                     <div>
                         <label className="block text-gray-700 mb-5 text-center sm:text-[14px] md:text-[16px] lg:text-[18px]">Название материала</label>

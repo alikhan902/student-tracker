@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 
 
-export const SubjectSection = ({ title, description, originalFileName, uploadAt, fileDownloadUrl, isSettingsVisible, OnDelete, OnChange }) => {
+export const SubjectSection = ({ title, description, originalFileName, fileDownloadUrl, isSettingsVisible, OnDelete, OnChanges }) => {
     const [isOpen, setIsOpen] = useState(false);
 
 
@@ -49,10 +49,6 @@ export const SubjectSection = ({ title, description, originalFileName, uploadAt,
                     ▼
                 </span>
                 </div>
-
-                <span className="text-xs text-gray-400">
-                    {uploadAt}
-                </span>
             </div>
 
             <div className={`overflow-hidden transition-all duration-300 px-5 ${isOpen ? 'max-h-40 pb-5 opacity-100' : 'max-h-0 opacity-0'}`}>
@@ -80,7 +76,7 @@ export const SubjectSection = ({ title, description, originalFileName, uploadAt,
                         <button
                         onClick={(e) => {
                             e.stopPropagation();
-                            onChange();
+                            OnChanges();
                         }}
                         className="text-xs bg-primary text-white px-3 py-1.5 rounded-md hover:bg-primary-hover transition-colors"
                         >
@@ -90,7 +86,7 @@ export const SubjectSection = ({ title, description, originalFileName, uploadAt,
                         <button
                         onClick={(e) => {
                             e.stopPropagation();
-                            onDelete();
+                            OnDelete();
                         }}
                         className="text-xs bg-primary text-white px-3 py-1.5 rounded-md bg-red-500 hover:bg-red-600 transition-colors"
                         >
