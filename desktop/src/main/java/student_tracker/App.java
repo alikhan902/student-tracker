@@ -26,6 +26,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -53,6 +55,7 @@ public class App extends Application {
     private final ExecutorService ioPool = Executors.newCachedThreadPool();
     private final BackendApi api = new BackendApi(mapper);
     private final Session session = new Session();
+    private final String BASE_URL = System.getProperty("student.tracker.baseUrl", "http://localhost:8080");
     private Stage stage;
     private Scene scene;
 
@@ -391,6 +394,11 @@ public class App extends Application {
         card.setPrefSize(200, 150);
         card.getStyleClass().add("subject-card");
 
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(200);
+        imageView.setFitHeight(150);
+        imageView.setPreserveRatio(false);
+
         VBox placeholder = new VBox(8);
         placeholder.setAlignment(Pos.CENTER);
         placeholder.getStyleClass().add("subject-placeholder");
@@ -405,7 +413,24 @@ public class App extends Application {
         titleLabel.setAlignment(Pos.CENTER);
 
         placeholder.getChildren().addAll(icon, titleLabel);
-        card.getChildren().add(placeholder);
+
+        String imageUrl = normalizeImageUrl(subject.photoUrl);
+        if (imageUrl != null) {
+            try {
+                Image image = new Image(imageUrl, 200, 150, false, true);
+                imageView.setImage(image);
+                image.errorProperty().addListener((obs, oldValue, hasError) -> {
+                    if (Boolean.TRUE.equals(hasError) && !card.getChildren().contains(placeholder)) {
+                        card.getChildren().add(placeholder);
+                    }
+                });
+                card.getChildren().add(imageView);
+            } catch (Exception ignored) {
+                card.getChildren().add(placeholder);
+            }
+        } else {
+            card.getChildren().add(placeholder);
+        }
 
         if (isHeadman()) {
             Button deleteBtn = new Button("Удалить");
@@ -425,6 +450,19 @@ public class App extends Application {
 
         card.setOnMouseClicked(e -> loadSubjectMaterialsPage(subject));
         return card;
+    }
+
+    private String normalizeImageUrl(String photoUrl) {
+        if (photoUrl == null || photoUrl.isBlank()) {
+            return null;
+        }
+        if (photoUrl.startsWith("http://") || photoUrl.startsWith("https://")) {
+            return photoUrl;
+        }
+        if (photoUrl.startsWith("/")) {
+            return BASE_URL + photoUrl;
+        }
+        return BASE_URL + "/" + photoUrl;
     }
 
     private void loadSubjectMaterialsPage(Subject subject) {
