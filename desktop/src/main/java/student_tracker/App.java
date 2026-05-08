@@ -1,6 +1,5 @@
 package student_tracker;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -9,15 +8,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -30,22 +26,20 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import student_tracker.api.BackendApi;
+import javafx.scene.control.PasswordField;
+
+import student_tracker.model.*;
+import student_tracker.ui.dialog.MaterialDialog;
+import student_tracker.ui.dialog.PasswordDialog;
+import student_tracker.ui.dialog.SubjectDialog;
+import student_tracker.ui.dialog.TextInputDialogEx;
+
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -172,7 +166,8 @@ public class App extends Application {
         actionButton.setDisable(true);
         runAsync(() -> {
             LoginResponse login = api.login(username.trim(), password);
-            session.token = login.token;
+            session.token = login.token();
+
             session.user = api.getProfile(session.token);
             session.hasGroup = api.hasGroup(session.token);
             return null;
@@ -286,8 +281,8 @@ public class App extends Application {
         if (session.user == null) {
             return;
         }
-        userNameLabel.setText(session.user.name);
-        userUsernameLabel.setText("@" + session.user.username);
+        userNameLabel.setText(session.user.name());
+        userUsernameLabel.setText("@" + session.user.username());
     }
 
     private void routeAfterLogin() {
@@ -302,10 +297,10 @@ public class App extends Application {
         contentRoot.getChildren().clear();
         Label title = pageTitle("Профиль аккаунта");
         VBox card = card();
-        Label name = new Label(session.user.name);
+        Label name = new Label(session.user.name());
         name.getStyleClass().add("profile-name");
-        Label username = new Label("@" + session.user.username);
-        Label email = new Label(session.user.email == null ? "Email не указан" : session.user.email);
+        Label username = new Label("@" + session.user.username());
+        Label email = new Label(session.user.email() == null ? "Email не указан" : session.user.email());
         Label role = new Label("Роль: " + (isHeadman() ? "Староста" : "Студент"));
 
         Button editNameBtn = new Button("Редактировать профиль");
@@ -406,7 +401,7 @@ public class App extends Application {
 
         Label icon = new Label("📘");
         icon.getStyleClass().add("subject-placeholder-icon");
-        Label titleLabel = new Label(subject.title);
+        Label titleLabel = new Label(subject.title());
         titleLabel.getStyleClass().add("subject-card-title");
         titleLabel.setWrapText(true);
         titleLabel.setMaxWidth(170);
@@ -414,7 +409,7 @@ public class App extends Application {
 
         placeholder.getChildren().addAll(icon, titleLabel);
 
-        String imageUrl = normalizeImageUrl(subject.photoUrl);
+        String imageUrl = normalizeImageUrl(subject.photoUrl());
         if (imageUrl != null) {
             try {
                 Image image = new Image(imageUrl, 200, 150, false, true);
@@ -467,7 +462,7 @@ public class App extends Application {
 
     private void loadSubjectMaterialsPage(Subject subject) {
         contentRoot.getChildren().clear();
-        contentRoot.getChildren().add(pageTitle("Материалы: " + subject.title));
+        contentRoot.getChildren().add(pageTitle("Материалы: " + subject.title()));
         if (!hasGroup()) {
             contentRoot.getChildren().add(noGroupBanner());
             return;
@@ -484,7 +479,7 @@ public class App extends Application {
         addBtn.setOnAction(e -> showCreateMaterialDialog(subject));
         contentRoot.getChildren().addAll(sections, new HBox(10, backBtn, addBtn));
 
-        runAsync(() -> api.getMaterials(session.token, subject.id))
+        runAsync(() -> api.getMaterials(session.token, subject.id()))
             .whenComplete((materials, ex) -> Platform.runLater(() -> {
                 if (ex != null) {
                     error("Не удалось загрузить материалы: " + rootMessage(ex));
@@ -494,12 +489,12 @@ public class App extends Application {
                         VBox body = new VBox(10);
                         body.getStyleClass().add("content-card");
                         Label description = new Label(
-                            material.description == null || material.description.isBlank()
+                            material.description() == null || material.description().isBlank()
                                 ? "Описание отсутствует"
-                                : material.description
+                                : material.description()
                         );
                         description.setWrapText(true);
-                        Label file = new Label("Файл: " + (material.originalFileName == null ? "Без файла" : material.originalFileName));
+                        Label file = new Label("Файл: " + (material.originalFileName() == null ? "Без файла" : material.originalFileName()));
 
                         HBox actions = new HBox(8);
                         Button downloadBtn = new Button("Скачать");
@@ -518,7 +513,7 @@ public class App extends Application {
                         }
 
                         body.getChildren().addAll(description, file, actions);
-                        javafx.scene.control.TitledPane pane = new javafx.scene.control.TitledPane(material.title, body);
+                        javafx.scene.control.TitledPane pane = new javafx.scene.control.TitledPane(material.title(), body);
                         pane.getStyleClass().add("material-section");
                         sections.getPanes().add(pane);
                     }
@@ -550,7 +545,7 @@ public class App extends Application {
         removeBtn.setOnAction(e -> {
             GroupMember member = members.getSelectionModel().getSelectedItem();
             if (member != null) {
-                removeMember(member.id);
+                removeMember(member.id());
             }
         });
         Button deleteGroupBtn = new Button("Удалить группу");
@@ -581,8 +576,8 @@ public class App extends Application {
                     contentRoot.getChildren().add(noGroupBanner());
                 } else {
                     updateGroupState(true);
-                    groupTitle.setText("Ваша группа: " + group.name);
-                    members.getItems().setAll(group.members);
+                    groupTitle.setText("Ваша группа: " + group.name());
+                    members.getItems().setAll(group.members());
                 }
             }));
     }
@@ -614,7 +609,7 @@ public class App extends Application {
     }
 
     private boolean isHeadman() {
-        return session.user != null && "HEADMAN".equals(session.user.studentType);
+        return session.user != null && "HEADMAN".equals(session.user.studentType());
     }
 
     private boolean hasGroup() {
@@ -622,7 +617,7 @@ public class App extends Application {
     }
 
     private void refreshGroupStateFromProfile() {
-        updateGroupState(session.user != null && session.user.groupId != null);
+        updateGroupState(session.user != null && session.user.groupId() != null);
     }
 
     private void updateGroupState(boolean hasGroup) {
@@ -630,7 +625,7 @@ public class App extends Application {
     }
 
     private void showEditProfileDialog() {
-        TextInputDialogEx dialog = new TextInputDialogEx("Новое имя", session.user.name);
+        TextInputDialogEx dialog = new TextInputDialogEx("Новое имя", session.user.name());
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(newName -> runAsync(() -> {
             api.updateProfile(session.token, newName);
@@ -735,7 +730,7 @@ public class App extends Application {
     }
 
     private void deleteSubject(Subject subject) {
-        runAsync(() -> api.deleteSubject(session.token, subject.id))
+        runAsync(() -> api.deleteSubject(session.token, subject.id()))
             .whenComplete((ok, ex) -> Platform.runLater(() -> {
                 if (ex != null) error("Не удалось удалить предмет: " + rootMessage(ex));
                 else loadSubjectsPage();
@@ -759,7 +754,7 @@ public class App extends Application {
                 error("Не удалось прочитать выбранный файл.");
                 return;
             }
-            runAsync(() -> api.createMaterial(session.token, subject.id, data))
+            runAsync(() -> api.createMaterial(session.token, subject.id(), data))
             .whenComplete((ok, ex) -> Platform.runLater(() -> {
                 if (ex != null) error("Не удалось создать материал: " + rootMessage(ex));
                 else loadSubjectMaterialsPage(subject);
@@ -786,7 +781,7 @@ public class App extends Application {
                     return;
                 }
             }
-            runAsync(() -> api.updateMaterial(session.token, material.id, subject.id, data))
+            runAsync(() -> api.updateMaterial(session.token, material.id(), subject.id(), data))
             .whenComplete((ok, ex) -> Platform.runLater(() -> {
                 if (ex != null) error("Не удалось изменить материал: " + rootMessage(ex));
                 else loadSubjectMaterialsPage(subject);
@@ -795,7 +790,7 @@ public class App extends Application {
     }
 
     private void deleteMaterial(Subject subject, Material material) {
-        runAsync(() -> api.deleteMaterial(session.token, material.id))
+        runAsync(() -> api.deleteMaterial(session.token, material.id()))
             .whenComplete((ok, ex) -> Platform.runLater(() -> {
                 if (ex != null) error("Не удалось удалить материал: " + rootMessage(ex));
                 else loadSubjectMaterialsPage(subject);
@@ -805,10 +800,10 @@ public class App extends Application {
     private void downloadMaterial(Material material) {
         if (material == null) return;
         FileChooser chooser = new FileChooser();
-        chooser.setInitialFileName(material.originalFileName == null ? "material.bin" : material.originalFileName);
+        chooser.setInitialFileName(material.originalFileName() == null ? "material.bin" : material.originalFileName());
         Path target = Optional.ofNullable(chooser.showSaveDialog(stage)).map(java.io.File::toPath).orElse(null);
         if (target == null) return;
-        runAsync(() -> api.downloadMaterial(session.token, material.filePath, target))
+        runAsync(() -> api.downloadMaterial(session.token, material.filePath(), target))
             .whenComplete((ok, ex) -> Platform.runLater(() -> {
                 if (ex != null) error("Ошибка скачивания: " + rootMessage(ex));
                 else info("Файл сохранён: " + target);
@@ -904,382 +899,11 @@ public class App extends Application {
         boolean hasGroup;
     }
 
-    private static class SubjectCell extends javafx.scene.control.ListCell<Subject> {
-        @Override
-        protected void updateItem(Subject item, boolean empty) {
-            super.updateItem(item, empty);
-            setText(empty || item == null ? null : item.title + " — " + item.description);
-        }
-    }
-
-    private static class MaterialCell extends javafx.scene.control.ListCell<Material> {
-        @Override
-        protected void updateItem(Material item, boolean empty) {
-            super.updateItem(item, empty);
-            setText(empty || item == null ? null : item.title + " (" + item.originalFileName + ")");
-        }
-    }
-
     private static class GroupMemberCell extends javafx.scene.control.ListCell<GroupMember> {
         @Override
         protected void updateItem(GroupMember item, boolean empty) {
             super.updateItem(item, empty);
-            setText(empty || item == null ? null : item.name + " @" + item.username + " [" + item.studentType + "]");
-        }
-    }
-
-    private record LoginResponse(String token) {}
-    private record UserProfile(long id, String name, String username, String email, String studentType, Long groupId) {}
-    private record Subject(long id, String title, String description, String photoUrl) {}
-    private record Material(long id, String title, String description, String originalFileName, String filePath) {}
-    private record Group(String name, List<GroupMember> members) {}
-    private record GroupMember(long id, String name, String username, String studentType) {}
-    private record SubjectPayload(String title, String description, Path photoPath) {}
-    private record MaterialPayload(String title, String description, Path filePath) {}
-    private record PasswordChange(String currentPassword, String newPassword) {}
-
-    private static class TextInputDialogEx extends javafx.scene.control.TextInputDialog {
-        TextInputDialogEx(String prompt, String initialValue) {
-            super(initialValue);
-            setTitle(prompt);
-            setHeaderText(prompt);
-        }
-    }
-
-    private static class PasswordDialog extends javafx.scene.control.Dialog<PasswordChange> {
-        PasswordDialog() {
-            setTitle("Сменить пароль");
-            ButtonType submit = new ButtonType("Обновить", ButtonBar.ButtonData.OK_DONE);
-            getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
-
-            PasswordField current = new PasswordField();
-            PasswordField next = new PasswordField();
-            PasswordField confirm = new PasswordField();
-            current.setPromptText("Текущий пароль");
-            next.setPromptText("Новый пароль");
-            confirm.setPromptText("Подтвердите пароль");
-            VBox content = new VBox(8, current, next, confirm);
-            getDialogPane().setContent(content);
-            setResultConverter(bt -> {
-                if (bt != submit) return null;
-                if (!next.getText().equals(confirm.getText())) return null;
-                return new PasswordChange(current.getText(), next.getText());
-            });
-        }
-    }
-
-    private static class SubjectDialog extends javafx.scene.control.Dialog<SubjectPayload> {
-        SubjectDialog(Stage stage, boolean editMode, Subject subject) {
-            setTitle(editMode ? "Изменить предмет" : "Создать предмет");
-            ButtonType submit = new ButtonType(editMode ? "Сохранить" : "Создать", ButtonBar.ButtonData.OK_DONE);
-            getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
-            TextField title = new TextField(subject == null ? "" : subject.title);
-            TextArea description = new TextArea(subject == null ? "" : subject.description);
-            Button pickFile = new Button("Выбрать фото");
-            Label fileLabel = new Label("Файл не выбран");
-            final Path[] selected = {null};
-            pickFile.setOnAction(e -> {
-                FileChooser chooser = new FileChooser();
-                chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"));
-                java.io.File file = chooser.showOpenDialog(stage);
-                if (file != null) {
-                    selected[0] = file.toPath();
-                    fileLabel.setText(file.getName());
-                }
-            });
-            getDialogPane().setContent(new VBox(8, title, description, pickFile, fileLabel));
-            setResultConverter(bt -> bt == submit ? new SubjectPayload(title.getText(), description.getText(), selected[0]) : null);
-        }
-    }
-
-    private static class MaterialDialog extends javafx.scene.control.Dialog<MaterialPayload> {
-        MaterialDialog(Stage stage, boolean editMode, Material material) {
-            setTitle(editMode ? "Изменить материал" : "Создать материал");
-            ButtonType submit = new ButtonType(editMode ? "Сохранить" : "Создать", ButtonBar.ButtonData.OK_DONE);
-            getDialogPane().getButtonTypes().addAll(submit, ButtonType.CANCEL);
-            TextField title = new TextField(material == null ? "" : material.title);
-            TextArea description = new TextArea(material == null ? "" : material.description);
-            Button pickFile = new Button("Выбрать файл");
-            Label fileLabel = new Label("Файл не выбран");
-            final Path[] selected = {null};
-            pickFile.setOnAction(e -> {
-                FileChooser chooser = new FileChooser();
-                java.io.File file = chooser.showOpenDialog(stage);
-                if (file != null) {
-                    selected[0] = file.toPath();
-                    fileLabel.setText(file.getName());
-                }
-            });
-            getDialogPane().setContent(new VBox(8, title, description, pickFile, fileLabel));
-            setResultConverter(bt -> bt == submit ? new MaterialPayload(title.getText(), description.getText(), selected[0]) : null);
-        }
-    }
-
-    private static class BackendApi {
-        private final HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(20)).build();
-        private final ObjectMapper mapper;
-        private final String base = System.getProperty("student.tracker.baseUrl", "http://localhost:8080");
-        private final String apiBase = base + "/api";
-        private final String authBase = base + "/auth";
-
-        BackendApi(ObjectMapper mapper) {
-            this.mapper = mapper;
-        }
-
-        LoginResponse login(String username, String password) throws Exception {
-            JsonNode body = mapper.createObjectNode().put("username", username).put("password", password);
-            JsonNode node = sendJson(authBase + "/login", "POST", body, null);
-            return new LoginResponse(node.path("accessToken").asText());
-        }
-
-        void signup(String name, String username, int studentType, String password) throws Exception {
-            JsonNode body = mapper.createObjectNode()
-                .put("name", name).put("username", username).put("studentType", studentType).put("password", password);
-            sendJson(authBase + "/signup", "POST", body, null);
-        }
-
-        UserProfile getProfile(String token) throws Exception {
-            JsonNode node = sendJson(apiBase + "/users/profile", "GET", null, token);
-            Long groupId = node.path("groupId").isNull() || node.path("groupId").isMissingNode() ? null : node.path("groupId").asLong();
-            return new UserProfile(
-                node.path("id").asLong(),
-                node.path("name").asText(""),
-                node.path("username").asText(""),
-                node.path("email").asText(""),
-                node.path("studentType").asText(""),
-                groupId
-            );
-        }
-
-        void updateProfile(String token, String name) throws Exception {
-            JsonNode body = mapper.createObjectNode().put("name", name);
-            sendJson(apiBase + "/users/profile", "PUT", body, token);
-        }
-
-        void requestEmailChange(String token, String email) throws Exception {
-            sendText(apiBase + "/users/request-email-change?newEmail=" + enc(email), "PUT", null, token);
-        }
-
-        void changePassword(String token, String currentPassword, String newPassword) throws Exception {
-            JsonNode body = mapper.createObjectNode()
-                .put("currentPassword", currentPassword)
-                .put("newPassword", newPassword)
-                .put("confirmPassword", newPassword);
-            sendJson(apiBase + "/users/change-password", "PUT", body, token);
-        }
-
-        void forgotPassword(String email) throws Exception {
-            sendText(apiBase + "/users/forgot-password?email=" + enc(email), "POST", "", null);
-        }
-
-        void deleteAccount(String token, String password) throws Exception {
-            String url = apiBase + "/users/delete";
-            if (password != null && !password.isBlank()) {
-                url += "?password=" + enc(password);
-            }
-            sendText(url, "DELETE", null, token);
-        }
-
-        List<Subject> getSubjects(String token) throws Exception {
-            JsonNode node = sendJson(apiBase + "/training-subjects", "GET", null, token);
-            List<Subject> out = new ArrayList<>();
-            if (node.isArray()) {
-                for (JsonNode s : node) {
-                    out.add(new Subject(s.path("id").asLong(), s.path("title").asText(""), s.path("description").asText(""), s.path("photoUrl").asText("")));
-                }
-            }
-            return out;
-        }
-
-        void createSubject(String token, SubjectPayload payload) throws Exception {
-            JsonNode dto = mapper.createObjectNode().put("title", payload.title()).put("description", payload.description());
-            sendMultipart(apiBase + "/training-subjects", token, Map.of("data", mapper.writeValueAsString(dto)), "photo", payload.photoPath());
-        }
-
-        void deleteSubject(String token, long subjectId) throws Exception {
-            sendText(apiBase + "/training-subjects/" + subjectId, "DELETE", null, token);
-        }
-
-        List<Material> getMaterials(String token, long subjectId) throws Exception {
-            JsonNode node = sendJson(apiBase + "/educational-materials/subject/" + subjectId, "GET", null, token);
-            List<Material> out = new ArrayList<>();
-            if (node.isArray()) {
-                for (JsonNode s : node) {
-                    out.add(new Material(
-                        s.path("id").asLong(),
-                        s.path("title").asText(""),
-                        s.path("description").asText(""),
-                        s.path("originalFileName").asText(""),
-                        s.path("filePath").asText("")
-                    ));
-                }
-            }
-            return out;
-        }
-
-        void createMaterial(String token, long subjectId, MaterialPayload payload) throws Exception {
-            JsonNode dto = mapper.createObjectNode()
-                .put("trainingSubjectId", subjectId)
-                .put("title", payload.title())
-                .put("description", payload.description());
-            sendMultipart(apiBase + "/educational-materials", token, Map.of("data", mapper.writeValueAsString(dto)), "file", payload.filePath());
-        }
-
-        void updateMaterial(String token, long materialId, long subjectId, MaterialPayload payload) throws Exception {
-            JsonNode dto = mapper.createObjectNode()
-                .put("trainingSubjectId", subjectId)
-                .put("title", payload.title())
-                .put("description", payload.description());
-            sendMultipart(apiBase + "/educational-materials/" + materialId, token, Map.of("data", mapper.writeValueAsString(dto)), "file", payload.filePath());
-        }
-
-        void deleteMaterial(String token, long materialId) throws Exception {
-            sendText(apiBase + "/educational-materials/" + materialId, "DELETE", null, token);
-        }
-
-        Group getMyGroup(String token) throws Exception {
-            JsonNode node = sendJson(apiBase + "/groups/my-group", "GET", null, token);
-            List<GroupMember> members = new ArrayList<>();
-            JsonNode membersNode = node.path("members");
-            if (membersNode.isArray()) {
-                for (JsonNode m : membersNode) {
-                    members.add(new GroupMember(m.path("id").asLong(), m.path("name").asText(""), m.path("username").asText(""), m.path("studentType").asText("")));
-                }
-            }
-            return new Group(node.path("name").asText(""), members);
-        }
-
-        boolean hasGroup(String token) throws Exception {
-            try {
-                Group group = getMyGroup(token);
-                return group != null && group.name() != null && !group.name().isBlank();
-            } catch (Exception ex) {
-                String message = ex.getMessage() == null ? "" : ex.getMessage();
-                if (message.contains("HTTP 404")) {
-                    return false;
-                }
-                throw ex;
-            }
-        }
-
-        void createGroup(String token, String groupName) throws Exception {
-            JsonNode body = mapper.createObjectNode().put("name", groupName);
-            sendText(apiBase + "/groups", "POST", mapper.writeValueAsString(body), token, "application/json");
-        }
-
-        void addUserToGroup(String token, String username) throws Exception {
-            sendText(apiBase + "/groups/add-student/" + enc(username), "PUT", null, token);
-        }
-
-        void deleteUserFromGroup(String token, long userId) throws Exception {
-            sendText(apiBase + "/groups/delete-student/" + userId, "DELETE", null, token);
-        }
-
-        void deleteGroup(String token) throws Exception {
-            sendText(apiBase + "/groups", "DELETE", null, token);
-        }
-
-        void downloadMaterial(String token, String url, Path target) throws Exception {
-            HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-                .header("Authorization", "Bearer " + token)
-                .GET()
-                .build();
-            HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-            if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                throw new IOException("HTTP " + response.statusCode());
-            }
-            Files.write(target, response.body());
-        }
-
-        private JsonNode sendJson(String url, String method, JsonNode body, String token) throws Exception {
-            HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(url)).header("Accept", "application/json");
-            if (token != null && !token.isBlank()) builder.header("Authorization", "Bearer " + token);
-            switch (method) {
-                case "POST" -> builder.POST(HttpRequest.BodyPublishers.ofString(body == null ? "" : mapper.writeValueAsString(body)))
-                    .header("Content-Type", "application/json");
-                case "PUT" -> builder.PUT(HttpRequest.BodyPublishers.ofString(body == null ? "" : mapper.writeValueAsString(body)))
-                    .header("Content-Type", "application/json");
-                case "DELETE" -> builder.DELETE();
-                default -> builder.GET();
-            }
-            HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                throw new IOException("HTTP " + response.statusCode() + ": " + response.body());
-            }
-            if (response.body() == null || response.body().isBlank()) return mapper.createObjectNode();
-            return mapper.readTree(response.body());
-        }
-
-        private void sendText(String url, String method, String body, String token) throws Exception {
-            HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(url)).header("Accept", "application/json");
-            if (token != null && !token.isBlank()) builder.header("Authorization", "Bearer " + token);
-            switch (method) {
-                case "POST" -> builder.POST(HttpRequest.BodyPublishers.ofString(body == null ? "" : body));
-                case "PUT" -> builder.PUT(HttpRequest.BodyPublishers.ofString(body == null ? "" : body));
-                case "DELETE" -> builder.DELETE();
-                default -> builder.GET();
-            }
-            HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                throw new IOException("HTTP " + response.statusCode() + ": " + response.body());
-            }
-        }
-
-        private void sendText(String url, String method, String body, String token, String contentType) throws Exception {
-            HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(url)).header("Accept", "application/json");
-            if (token != null && !token.isBlank()) builder.header("Authorization", "Bearer " + token);
-            if (contentType != null && !contentType.isBlank()) builder.header("Content-Type", contentType);
-            switch (method) {
-                case "POST" -> builder.POST(HttpRequest.BodyPublishers.ofString(body == null ? "" : body));
-                case "PUT" -> builder.PUT(HttpRequest.BodyPublishers.ofString(body == null ? "" : body));
-                case "DELETE" -> builder.DELETE();
-                default -> builder.GET();
-            }
-            HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                throw new IOException("HTTP " + response.statusCode() + ": " + response.body());
-            }
-        }
-
-        private void sendMultipart(String url, String token, Map<String, String> textParts, String filePartName, Path filePath) throws Exception {
-            String boundary = "----JavaFxBoundary" + UUID.randomUUID();
-            List<byte[]> chunks = new ArrayList<>();
-            for (Map.Entry<String, String> entry : textParts.entrySet()) {
-                chunks.add(("--" + boundary + "\r\n").getBytes(StandardCharsets.UTF_8));
-                chunks.add(("Content-Disposition: form-data; name=\"" + entry.getKey() + "\"\r\n\r\n").getBytes(StandardCharsets.UTF_8));
-                chunks.add((entry.getValue() + "\r\n").getBytes(StandardCharsets.UTF_8));
-            }
-            if (filePath != null) {
-                chunks.add(("--" + boundary + "\r\n").getBytes(StandardCharsets.UTF_8));
-                chunks.add(("Content-Disposition: form-data; name=\"" + filePartName + "\"; filename=\"" + filePath.getFileName() + "\"\r\n").getBytes(StandardCharsets.UTF_8));
-                chunks.add(("Content-Type: application/octet-stream\r\n\r\n").getBytes(StandardCharsets.UTF_8));
-                chunks.add(Files.readAllBytes(filePath));
-                chunks.add("\r\n".getBytes(StandardCharsets.UTF_8));
-            }
-            chunks.add(("--" + boundary + "--\r\n").getBytes(StandardCharsets.UTF_8));
-
-            int total = chunks.stream().mapToInt(a -> a.length).sum();
-            byte[] body = new byte[total];
-            int offset = 0;
-            for (byte[] chunk : chunks) {
-                System.arraycopy(chunk, 0, body, offset, chunk.length);
-                offset += chunk.length;
-            }
-
-            HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-                .header("Authorization", "Bearer " + token)
-                .header("Content-Type", "multipart/form-data; boundary=" + boundary)
-                .POST(HttpRequest.BodyPublishers.ofByteArray(body))
-                .build();
-
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                throw new IOException("HTTP " + response.statusCode() + ": " + response.body());
-            }
-        }
-
-        private String enc(String value) {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8);
+            setText(empty || item == null ? null : item.name() + " @" + item.username() + " [" + item.studentType() + "]");
         }
     }
 }
