@@ -2,12 +2,7 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json /app/
-RUN npm install
+COPY package*.json ./
+RUN npm ci
 
-COPY . /app
-
-EXPOSE 5173
-
-CMD ["npm","run","build","--","--host","0.0.0.0","--port","5173"]
-
+COPY . .
