@@ -86,9 +86,14 @@ public class App extends Application {
     }
 
     private BorderPane wrapAuth(VBox card) {
-        BorderPane root = new BorderPane(card);
+        VBox centerContainer = new VBox();
+        centerContainer.setAlignment(Pos.CENTER);
+        centerContainer.getChildren().add(card);
+        centerContainer.setPrefHeight(Double.MAX_VALUE);
+        VBox.setVgrow(centerContainer, Priority.ALWAYS);
+        
+        BorderPane root = new BorderPane(centerContainer);
         root.getStyleClass().add("auth-root");
-        BorderPane.setAlignment(card, Pos.CENTER);
         return root;
     }
 
@@ -312,7 +317,8 @@ public class App extends Application {
         editNameBtn.setOnAction(e -> showEditProfileDialog());
         changePasswordBtn.setOnAction(e -> showChangePasswordDialog());
         createGroupBtn.setOnAction(e -> showCreateGroupDialog());
-        createGroupBtn.setDisable(!isHeadman());
+        createGroupBtn.setVisible(isHeadman());
+        createGroupBtn.setManaged(isHeadman());
 
         VBox actions = new VBox(8, editNameBtn, changePasswordBtn, createGroupBtn);
         HBox row = new HBox(20, new VBox(6, name, username, email, role), actions);
@@ -364,7 +370,8 @@ public class App extends Application {
         
         Button createBtn = new Button("Создать предмет");
         createBtn.getStyleClass().add("secondary-button");
-        createBtn.setDisable(!isHeadman());
+        createBtn.setVisible(isHeadman());
+        createBtn.setManaged(isHeadman());
         createBtn.setOnAction(e -> showCreateSubjectDialog());
         
         HBox actions = new HBox(10, createBtn);
@@ -475,7 +482,8 @@ public class App extends Application {
         backBtn.setOnAction(e -> loadSubjectsPage());
         Button addBtn = new Button("Добавить материал");
         addBtn.getStyleClass().add("secondary-button");
-        addBtn.setDisable(!isHeadman());
+        addBtn.setVisible(isHeadman());
+        addBtn.setManaged(isHeadman());
         addBtn.setOnAction(e -> showCreateMaterialDialog(subject));
         contentRoot.getChildren().addAll(sections, new HBox(10, backBtn, addBtn));
 
@@ -556,11 +564,13 @@ public class App extends Application {
         members.setCellFactory(v -> new GroupMemberCell());
         Button addBtn = new Button("Добавить участника");
         addBtn.getStyleClass().add("secondary-button");
-        addBtn.setDisable(!isHeadman());
+        addBtn.setVisible(isHeadman());
+        addBtn.setManaged(isHeadman());
         addBtn.setOnAction(e -> showAddMemberDialog());
         Button removeBtn = new Button("Удалить участника");
         removeBtn.getStyleClass().add("danger-button");
-        removeBtn.setDisable(!isHeadman());
+        removeBtn.setVisible(isHeadman());
+        removeBtn.setManaged(isHeadman());
         removeBtn.setOnAction(e -> {
             GroupMember member = members.getSelectionModel().getSelectedItem();
             if (member != null) {
@@ -569,7 +579,8 @@ public class App extends Application {
         });
         Button deleteGroupBtn = new Button("Удалить группу");
         deleteGroupBtn.getStyleClass().add("danger-button");
-        deleteGroupBtn.setDisable(!isHeadman());
+        deleteGroupBtn.setVisible(isHeadman());
+        deleteGroupBtn.setManaged(isHeadman());
         deleteGroupBtn.setOnAction(e -> deleteGroup());
         contentRoot.getChildren().addAll(groupTitle, members, new HBox(10, addBtn, removeBtn, deleteGroupBtn));
         if (!hasGroup()) {
