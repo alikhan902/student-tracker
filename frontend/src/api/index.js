@@ -75,4 +75,9 @@ export const educationalMaterialService = {
   deleteMaterial: (id) => api.delete(`/educational-materials/${id}`),
 }
 
+export const materialCompleteService = {
+  getStatus: (materialId) => api.get(`/material-complete/${materialId}`),
+  updateStatus: (materialId, status) => api.put(`/material-complete/${materialId}`, { status }),
+}
+
 export default api;

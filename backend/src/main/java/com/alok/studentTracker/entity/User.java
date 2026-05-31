@@ -43,7 +43,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Column(unique = true)                  // ✅ email should be unique
+    @Column(unique = true)              
     private String email;
 
     private String providerId;

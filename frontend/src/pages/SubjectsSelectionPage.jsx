@@ -1,4 +1,4 @@
-import { subjectService } from '../api';
+import { subjectService, groupService } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { SubjectCard } from '../components/Subject/SubjectCard';
 import { Plus } from 'lucide-react';
@@ -17,6 +17,8 @@ export default function SubjectSelectionPage() {
 
     const [subjects, setSubjects] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [group, setGroup] = useState(null);
+    const [groupCheckDone, setGroupCheckDone] = useState(false);
 
     const [selectedSubject, setSelectedSubject] = useState(null);
 
@@ -38,11 +40,33 @@ export default function SubjectSelectionPage() {
         }
     };
 
+    const checkGroup = async () => {
+        try {
+            const res = await groupService.getMyGroup();
+            setGroup(res.data);
+            console.log('User is in group:', res.data);
+        } catch (error) {
+            if (error.response?.status === 404) {
+                console.log('User is not in any group');
+                setGroup(null);
+            } else {
+                console.error("Error fetching group:", error?.response?.data?.error ?? error.message);
+            }
+        } finally {
+            setGroupCheckDone(true);
+        }
+    };
+
     useEffect(() => {
         fetchSubjects();
-    }, []);
+        if (user?.studentType === "HEADMAN") {
+            checkGroup();
+        } else {
+            setGroupCheckDone(true);
+        }
+    }, [user]);
 
-    const handleCreateSubject = (e) => {
+    const handleCreateSubject = async (e) => {
         e.preventDefault();
         if(!subjectTitle || !subjectDescription || !subjectFile) {
             toast.error('Пожалуйста, заполните все поля и выберите файл.');
@@ -66,13 +90,23 @@ export default function SubjectSelectionPage() {
 
             formData.append("data", JSON.stringify(dto));
             formData.append("photo", subjectFile);
-            subjectService.createSubject(formData)
+            await subjectService.createSubject(formData);
+            
+            // Очистить форму и перезагрузить список
+            setSubjectTitle('');
+            setSubjectDescription('');
+            setSubjectFile(null);
+            setIsCreateSubject(false);
+            
+            // Перезагрузить предметы без обновления страницы
+            await fetchSubjects();
+            
+            toast.success('Предмет успешно создан!');
         } catch (error) {
             console.error("Error creating subject:", error?.response?.data?.error ?? error.message);
             toast.error('Ошибка при создании предмета. Пожалуйста, попробуйте снова.');
         } finally {
             setLoading(false);
-            setIsCreateSubject(false);
         }
     }
 
@@ -105,7 +139,7 @@ export default function SubjectSelectionPage() {
                     }}/>
                 ))}
 
-                {user.studentType == "HEADMAN" && (user.groupId != null) && 
+                {user?.studentType === "HEADMAN" && group && 
                 <div onClick={() => setIsCreateSubject(true)} className="group relative w-full h-[200px] rounded-2xl overflow-hidden bg-white shadow-md border-[4px] border-dashed border-[rgb(57,135,250)] cursor-pointer hover:border-[rgb(0,100,200)] duration-300">
                     <Plus className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[rgb(57,135,250)] group-hover:text-[rgb(0,100,200)] duration-300" size={48}/>
                 </div>}

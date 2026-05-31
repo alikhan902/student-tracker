@@ -30,5 +30,4 @@ public class Group {
     @Builder.Default
     private Set<TrainingSubject> trainingSubjects = new HashSet<>();
 
-
 }

@@ -6,9 +6,12 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { Plus } from 'lucide-react';
 import { Modal } from '../components/ui/Modal';
+import { useAuth } from '../context/AuthContext';
 
 export default function SubjectPage() {
  
+    const { user, setUser, logout } = useAuth();
+
     const navigate = useNavigate();
 
     const id = useParams().id;
@@ -55,8 +58,8 @@ export default function SubjectPage() {
             toast.error('Пожалуйста, заполните все поля и выберите файл.');
             return;
         }
-        if(materialFile.size > 1 * 1024 * 1024) {
-            toast.error('Размер файла не должен превышать 1 МБ.');
+        if(materialFile.size > 10 * 1024 * 1024) {
+            toast.error('Размер файла не должен превышать 10 МБ.');
             return;
         }
         setLoading(true);
@@ -69,25 +72,34 @@ export default function SubjectPage() {
             };
             formData.append("data", JSON.stringify(dto));
             formData.append("file", materialFile);
-            console.log(formData.get("data"));
             await educationalMaterialService.createMaterial(formData);
+            
+            // Очистить форму и перезагрузить список материалов
+            setMaterialTitle('');
+            setMaterialDescription('');
+            setMaterialFile(null);
+            setIsCreateMaterial(false);
+            
+            // Перезагрузить материалы
+            await fetchMaterial();
+            
+            toast.success('Материал успешно создан!');
         } catch (error) {
             console.error("Error creating material:", error?.response?.data?.error ?? error.message);
             toast.error('Ошибка при создании материала. Пожалуйста, попробуйте снова.');
         } finally {
             setLoading(false);
-            setIsCreateMaterial(false);
         }
     }
 
     const handleUpdateMaterial = async (e) => {
         e.preventDefault();
-        if(!materialTitle || !materialDescription || !materialFile) {
-            toast.error('Пожалуйста, заполните все поля и выберите файл.');
+        if(!materialTitle || !materialDescription) {
+            toast.error('Пожалуйста, заполните все поля.');
             return;
         }
-        if(materialFile.size > 1 * 1024 * 1024) {
-            toast.error('Размер файла не должен превышать 1 МБ.');
+        if(materialFile && materialFile.size > 10 * 1024 * 1024) {
+            toast.error('Размер файла не должен превышать 10 МБ.');
             return;
         }
         setLoading(true);
@@ -99,15 +111,26 @@ export default function SubjectPage() {
                 description: materialDescription
             };
             formData.append("data", JSON.stringify(dto));
-            formData.append("file", materialFile);
-            console.log(formData.get("data"));
+            if (materialFile) {
+                formData.append("file", materialFile);
+            }
             await educationalMaterialService.updateMaterial(selectedMaterial.id, formData);
+            
+            // Очистить форму и перезагрузить список материалов
+            setMaterialTitle('');
+            setMaterialDescription('');
+            setMaterialFile(null);
+            setIsUpdateMaterial(false);
+            
+            // Перезагрузить материалы
+            await fetchMaterial();
+            
+            toast.success('Материал успешно обновлен!');
         } catch (error) {
             console.error("Error updating material:", error?.response?.data?.error ?? error.message);
             toast.error('Ошибка при обновлении материала. Пожалуйста, попробуйте снова.');
         } finally {
             setLoading(false);
-            setIsCreateMaterial(false);
         }
     }
 
@@ -138,18 +161,20 @@ export default function SubjectPage() {
             <h2 className="text-3xl font-heading font-bold text-primary mb-20 text-center">Разделы</h2>
             <div className="flex flex-col gap-6">
                 {materials?.map((material) => (
-                <SubjectSection key={material.title} title={material.title} description={material.description} originalFileName={material.originalFileName} uploadAt={material.uploadAt} fileDownloadUrl={material.filePath} 
-                onDelete={() => {
+                <SubjectSection key={material.title} title={material.title} description={material.description} originalFileName={material.originalFileName} uploadAt={material.uploadAt} fileDownloadUrl={material.filePath} materialId={material.id}
+                OnDelete={() => {
                     setSelectedMaterial(material);
                     setIsDeleteMaterial(true);
                 }}
                 
-                onChange={() => {
+                OnChanges={() => {
                     setSelectedMaterial(material);
                     setMaterialTitle(material.title);
                     setMaterialDescription(material.description);
-                    setIsCreateMaterial(true);
+                    setIsUpdateMaterial(true);
                 }}
+
+                isSettingsVisible={user.studentType == "HEADMAN"}
                 />
                 ))}
     
@@ -194,7 +219,7 @@ export default function SubjectPage() {
                 </form>
             </Modal>
 
-                        <Modal isOpen={isUpdateMaterial} onClose={() => setIsUpdateMaterial(false)} title="Создать материал">
+            <Modal isOpen={isUpdateMaterial} onClose={() => setIsUpdateMaterial(false)} title="Обновить материал">
                 <form onSubmit={(e) => handleUpdateMaterial(e)} className="space-y-4">
                     <div>
                         <label className="block text-gray-700 mb-5 text-center sm:text-[14px] md:text-[16px] lg:text-[18px]">Название материала</label>
