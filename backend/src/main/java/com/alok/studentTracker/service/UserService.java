@@ -38,61 +38,6 @@ public class UserService {
         return mapToProfileDTO(user);
     }
 
-    public String requestEmailChange(Long userId, String newEmail) {
-        User user = findUserById(userId);
-
-        if (user.getProviderType() != AuthProviderType.EMAIL) {
-            throw new IllegalStateException(
-                    "Email change is not available for "
-                            + user.getProviderType().name() + " accounts"
-            );
-        }
-
-        if (user.getEmail() != null && user.getEmail().equalsIgnoreCase(newEmail)) {
-            throw new IllegalArgumentException("New email must be different from current email");
-        }
-
-        if (userRepository.existsByEmail(newEmail)) {
-            throw new IllegalArgumentException("Email already in use by another account");
-        }
-
-        String token = UUID.randomUUID().toString();
-        user.setPendingEmail(newEmail);
-        user.setEmailVerificationToken(token);
-        user.setEmailVerificationExpiry(LocalDateTime.now().plusHours(24));
-        userRepository.save(user);
-
-        emailService.sendEmailVerificationEmail(newEmail, user.getName(), token);
-
-        return "Verification link sent to " + newEmail + ". Please verify to confirm the change.";
-    }
-
-    public String confirmEmailChange(String token) {
-        User user = userRepository.findByEmailVerificationToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid verification token"));
-
-        if (user.getEmailVerificationExpiry().isBefore(LocalDateTime.now())) {
-            // clear expired token
-            user.setEmailVerificationToken(null);
-            user.setEmailVerificationExpiry(null);
-            user.setPendingEmail(null);
-            userRepository.save(user);
-            throw new IllegalStateException("Verification link expired. Please request a new one.");
-        }
-
-        if (user.getPendingEmail() == null) {
-            throw new IllegalStateException("No pending email change found");
-        }
-
-        user.setEmail(user.getPendingEmail());
-        user.setPendingEmail(null);
-        user.setEmailVerificationToken(null);
-        user.setEmailVerificationExpiry(null);
-        userRepository.save(user);
-
-        return "Email updated successfully";
-    }
-
     public String changePassword(Long userId, ChangePasswordDto dto) {
         User user = findUserById(userId);
 

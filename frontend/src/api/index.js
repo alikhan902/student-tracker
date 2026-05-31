@@ -46,7 +46,6 @@ export const authService = {
 export const userService = {
   getProfile: () => api.get('/users/profile'),
   updateProfile: (data) => api.put('/users/profile', data),
-  requestEmailChange: (newEmail) => api.put(`/users/request-email-change?newEmail=${newEmail}`),
   changePassword: (data) => api.put('/users/change-password', data),
   forgotPassword: (email) => api.post(`/users/forgot-password?email=${email}`),
   resetPassword: (token, newPassword) => api.post(`/users/reset-password?token=${token}&newPassword=${newPassword}`),

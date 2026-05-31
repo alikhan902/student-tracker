@@ -20,9 +20,6 @@ export default function ProfilePage() {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
 
-  // Email Change State
-  const [newEmail, setNewEmail] = useState('');
-
   // Forgot Password State
   const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
@@ -75,21 +72,6 @@ export default function ProfilePage() {
       setIsEditProfileModalOpen(false);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Не удалось обновить профиль');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRequestEmailChange = async (e) => {
-    e.preventDefault();
-    if (!newEmail) return toast.error('Введите новый email');
-    setLoading(true);
-    try {
-      await userService.requestEmailChange(newEmail);
-      toast.success('Ссылка подтверждения отправлена на новый email');
-      setNewEmail('');
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Не удалось запросить смену email');
     } finally {
       setLoading(false);
     }
@@ -202,31 +184,6 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
-      </div>
-
-      {/* Change Email Section */}
-      <div className="bg-white border border-lightblue-border rounded-xl p-6 sm:p-8 shadow-sm">
-        <h3 className="text-lg font-heading font-bold text-gray-900 mb-2">Сменить email</h3>
-        <p className="text-gray-500 text-sm mb-4">
-          Вы должны подтвердить новый email, перейдя по ссылке, отправленной в ваш почтовый ящик.
-        </p>
-        <form onSubmit={handleRequestEmailChange} className="flex flex-col sm:flex-row gap-3">
-          <input 
-            type="email" 
-            placeholder="Введите новый адрес email" 
-            value={newEmail} 
-            onChange={(e) => setNewEmail(e.target.value)} 
-            className="flex-1 px-3 py-2 bg-lightblue-surface border border-lightblue-border rounded-lg text-gray-900 focus:outline-none focus:ring-1 focus:ring-primary"
-            required 
-          />
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="bg-primary hover:bg-primary-hover text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors whitespace-nowrap disabled:opacity-50"
-          >
-            Запросить смену email
-          </button>
-        </form>
       </div>
 
       {/* Danger Zone */}

@@ -70,18 +70,6 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendEmailVerificationEmail(String toEmail, String name, String token) {
-        Context context = new Context();
-        context.setVariable("appName", appName);
-        context.setVariable("name", name);
-        context.setVariable("verifyUrl", frontendUrl + "/verify-email?token=" + token);
-
-        sendHtmlEmail(toEmail,
-                "Verify your new email — " + appName,
-                buildFromTemplate("email-verification", context));
-    }
-
-    @Override
     public void sendPasswordChangedNotificationEmail(String toEmail, String name) {
         Context context = new Context();
         context.setVariable("appName", appName);

@@ -1,3 +1,4 @@
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { UserCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';

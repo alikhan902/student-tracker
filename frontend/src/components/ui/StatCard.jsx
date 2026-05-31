@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const StatCard = ({ title, value, icon: Icon, colorClass = "text-gray-900", subtitle, className = "" }) => {
   return (
     <div className={`bg-blue-card border border-blue-border rounded-xl p-6 shadow-sm ${className}`}>

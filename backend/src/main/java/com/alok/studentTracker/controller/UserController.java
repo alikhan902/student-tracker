@@ -70,19 +70,6 @@ public class UserController {
         return ResponseEntity.ok(userService.updateProfile(user.getId(), dto));
     }
 
-    @PutMapping("/request-email-change")
-    public ResponseEntity<String> requestEmailChange(@RequestParam @Email @NotBlank String newEmail) {
-
-        User user = getCurrentUser();
-        return ResponseEntity.ok(userService.requestEmailChange(user.getId(), newEmail));
-    }
-
-    @GetMapping("/confirm-email-change")
-    public ResponseEntity<String> confirmEmailChange(@RequestParam String token) {
-        return ResponseEntity.ok(userService.confirmEmailChange(token));
-    }
-
-
     @PutMapping("/change-password")
     public ResponseEntity<String> changePassword(
             @Valid @RequestBody ChangePasswordDto dto) {

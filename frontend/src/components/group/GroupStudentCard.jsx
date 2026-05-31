@@ -1,3 +1,4 @@
+import React from 'react';
 import toast from 'react-hot-toast';
 
 export const GroupStudentCard = ({ id, name, username, studentType, thisStudentType, onDeleteUser }) => {

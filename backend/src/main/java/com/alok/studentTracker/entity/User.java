@@ -61,17 +61,6 @@ public class User implements UserDetails {
     @Column
     private LocalDateTime lastPasswordResetRequest;
 
-
-    @Column
-    private String pendingEmail;
-
-    @Column
-    private String emailVerificationToken;
-
-    @Column
-    private LocalDateTime emailVerificationExpiry;
-
-
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @Builder.Default

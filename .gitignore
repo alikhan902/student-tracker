@@ -4,6 +4,8 @@
 # IDE
 .idea/
 
+# SSL
+nginx/certs/
 # Node
 node_modules/
 dist/

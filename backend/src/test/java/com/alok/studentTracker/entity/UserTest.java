@@ -102,12 +102,6 @@ class UserTest {
     }
 
     @Test
-    void testUserEmailVerificationToken() {
-        user.setEmailVerificationToken("verify123");
-        assertEquals("verify123", user.getEmailVerificationToken());
-    }
-
-    @Test
     void testUserBuilder() {
         User builtUser = User.builder()
                 .id(2L)

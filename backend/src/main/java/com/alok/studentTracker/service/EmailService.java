@@ -18,7 +18,6 @@ public interface EmailService {
     void sendHtmlEmail(String to, String subject, String htmlBody);
     void sendWelcomeEmail(String toEmail, String name);
     void sendPasswordResetEmail(String toEmail, String name, String token);
-    void sendEmailVerificationEmail(String toEmail, String name, String token);
     void sendPasswordChangedNotificationEmail(String toEmail, String name);
 }
 
