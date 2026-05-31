@@ -68,6 +68,65 @@ docker-compose down
 
 ---
 
+## Настройка HTTPS
+
+Коротко: для HTTPS используем `nginx` как обратный прокси, сертификаты располагаем в `nginx/certs`. Ниже — варианты для локальной разработки и для производства.
+
+- Локальная разработка (рекомендуется `mkcert`):
+  - Установите `mkcert` (https://github.com/FiloSottile/mkcert).
+  - Выполните:
+
+```bash
+mkcert -install
+mkcert localhost 127.0.0.1 ::1
+```
+
+  - Скопируйте полученные файлы (`localhost.pem` и `localhost-key.pem`) в `nginx/certs/` и переименуйте в `localhost.crt` и `localhost.key`.
+  - Обновите `docker-compose.yml`/`nginx`-volumes, чтобы пробросить `nginx/certs` в контейнер, например:
+
+```yaml
+services:
+  nginx:
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+```
+
+  - В `nginx/nginx.conf` добавьте или включите блок HTTPS:
+
+```nginx
+server {
+  listen 443 ssl;
+  server_name localhost;
+
+  ssl_certificate /etc/nginx/certs/localhost.crt;
+  ssl_certificate_key /etc/nginx/certs/localhost.key;
+
+  location / {
+    proxy_pass http://backend:8080; # пример
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+  }
+}
+```
+
+- Самоподписанный сертификат (если не хотите `mkcert`):
+
+```bash
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout nginx/certs/localhost.key -out nginx/certs/localhost.crt \
+  -subj "/CN=localhost"
+```
+
+- Продакшн (Let's Encrypt / Certbot или автоматические прокси типа Traefik):
+  - Для публичного домена используйте `certbot` или интеграцию через `nginx-proxy`/`traefik`.
+  - Настройте проброс портов 80/443 и автоматическое обновление сертификатов (Certbot + cron/systemd timer либо встроенный ACME в Traefik).
+
+- Обновите переменные окружения для HTTPS:
+  - В `.env` и `backend/.example` укажите `APP_FRONTEND_URL=https://your-domain` и `VITE_API_BASE_URL=https://your-domain` (или `https://localhost` для локали).
+
+Примечание: в локальной разработке браузер может блокировать небезопасные certs — `mkcert` упрощает доверие сертификатам на машине разработчика.
+
 ## 3. Запуск десктопа (локально)
 
 Требования: Java 17+, Maven.
