@@ -60,10 +60,6 @@ public class BackendApi {
         sendJson(apiBase + "/users/profile", "PUT", body, token);
     }
 
-    public void requestEmailChange(String token, String email) throws Exception {
-        sendText(apiBase + "/users/request-email-change?newEmail=" + enc(email), "PUT", null, token);
-    }
-
     public void changePassword(String token, String currentPassword, String newPassword) throws Exception {
         JsonNode body = mapper.createObjectNode()
             .put("currentPassword", currentPassword)

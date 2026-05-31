@@ -40,17 +40,6 @@
         </HBox>
     </VBox>
 
-    <!-- Change Email -->
-    <VBox styleClass="card">
-        <Label text="Сменить email" styleClass="section-title"/>
-        <Label text="Вы должны подтвердить новый email..." styleClass="text-muted"/>
-
-        <HBox spacing="10">
-            <TextField promptText="Введите новый email" HBox.hgrow="ALWAYS"/>
-            <Button text="Запросить смену email" styleClass="btn primary"/>
-        </HBox>
-    </VBox>
-
     <!-- Danger Zone -->
     <VBox styleClass="danger-card">
         <Label text="Опасная зона" styleClass="danger-title"/>

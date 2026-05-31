@@ -326,14 +326,6 @@ public class App extends Application {
         HBox.setHgrow(row.getChildren().get(0), Priority.ALWAYS);
         card.getChildren().add(row);
 
-        VBox emailSection = card();
-        TextField newEmailField = new TextField();
-        newEmailField.setPromptText("Введите новый email");
-        Button emailBtn = new Button("Запросить смену email");
-        emailBtn.getStyleClass().add("primary-button");
-        emailBtn.setOnAction(e -> requestEmailChange(newEmailField.getText(), emailBtn));
-        emailSection.getChildren().addAll(new Label("Сменить email"), newEmailField, emailBtn);
-
         VBox danger = card();
         danger.getStyleClass().add("danger-card");
         Label dangerTitle = new Label("Опасная зона");
@@ -347,7 +339,7 @@ public class App extends Application {
         if (!hasGroup()) {
             contentRoot.getChildren().add(noGroupBanner());
         }
-        contentRoot.getChildren().addAll(card, emailSection, danger);
+        contentRoot.getChildren().addAll(card, danger);
     }
 
     private void loadSubjectsPage() {
@@ -703,17 +695,6 @@ public class App extends Application {
                     loadGroupPage();
                 }
             })));
-    }
-
-    private void requestEmailChange(String email, Button button) {
-        if (email.isBlank()) return;
-        button.setDisable(true);
-        runAsync(() -> api.requestEmailChange(session.token, email))
-            .whenComplete((ok, ex) -> Platform.runLater(() -> {
-                button.setDisable(false);
-                if (ex != null) error("Не удалось запросить смену email: " + rootMessage(ex));
-                else info("Ссылка подтверждения отправлена.");
-            }));
     }
 
     private void deleteAccount() {
