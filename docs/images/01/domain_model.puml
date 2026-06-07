@@ -1,0 +1,78 @@
+@startuml domain_model
+title Domain Model — Student Tracker
+skinparam classAttributeIconSize 0
+hide circle
+
+class Group {
+  id: Long
+  name: String
+}
+
+class User {
+  id: Long
+  name: String
+  username: String
+  email: String
+  password: String
+  studentType: StudentType
+  providerType: AuthProviderType
+  providerId: String
+  roles: Set<RoleType>
+  resetToken: String
+  resetTokenExpiry: LocalDateTime
+}
+
+class TrainingSubject {
+  id: Long
+  title: String
+  description: String
+  photoPath: String
+}
+
+class EducationalMaterial {
+  id: Long
+  title: String
+  description: String
+  filePath: String
+}
+
+class MaterialComplete {
+  userId: Long
+  educationalMaterialId: Long
+  status: CompletionStatus
+}
+
+enum StudentType {
+  HEADMAN
+  STANDARD
+}
+
+enum RoleType {
+  ADMIN
+  USER
+  AUDITOR
+}
+
+enum AuthProviderType {
+  LOCAL
+  GOOGLE
+  GITHUB
+  EMAIL
+}
+
+enum CompletionStatus {
+  COMPLETED
+  NOT_COMPLETED
+}
+
+Group "1" o-- "0..*" User : employs
+Group "1" *-- "0..*" TrainingSubject : contains
+TrainingSubject "1" *-- "0..*" EducationalMaterial : holds
+User "1" -- "0..*" MaterialComplete : tracks
+EducationalMaterial "1" -- "0..*" MaterialComplete : tracked_by
+User --> StudentType
+User --> RoleType
+User --> AuthProviderType
+MaterialComplete --> CompletionStatus
+
+@enduml

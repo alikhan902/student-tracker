@@ -163,6 +163,6 @@ curl -X POST "http://localhost:8080/api/educational-materials" \
 - .env.example — пример корневых переменных окружения  
 - backend/.example — пример переменных для бэкенда (JWT_SECRET, mail и т.д.)  
 - docker-compose.yml — конфигурация для локального запуска всех сервисов  
-- Документация: docs/ (frontend/backend/desktop)  
+- Документация: [docs/](docs/README.md) (структура по этапам ПИ, см. docs-templ)  
 ![](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAnEAAAACCAYAAAA3pIp+AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANUlEQVR4nO3OMQ2AABAAsSNBCUrfD6LYGNDAgAU2QtIq6DIzW7UHAMBfHGt1V+fXEwAAXrseHDAF/orRG+cAAAAASUVORK5CYII=)  
 Если хотите, могу: сгенерировать полноценную OpenAPI-спецификацию по классам контроллеров, дополнить примеры DTO (формат полей) или добавить CONTRIBUTING.md и шаблоны PR/ISSUE.  

@@ -1,0 +1,37 @@
+@startuml sequence_diagram_4
+title OAuth2 — вход через Google
+actor "Пользователь" as User
+participant "React SPA" as UI
+participant "Google OAuth2" as Google
+participant "Spring Security\nOAuth2" as SEC
+participant "OAuth2successHandler\n(Security)" as Handler
+participant "UserRepository\n(Foundation)" as UR
+database "PostgreSQL" as DB
+
+User -> UI : Нажать «Войти через Google»
+UI -> SEC : GET /oauth2/authorization/google
+SEC -> Google : Redirect (client_id, scope)
+Google --> User : Страница согласия Google
+User -> Google : Подтвердить
+Google -> SEC : callback + authorization code
+SEC -> Google : Обмен code → access_token
+Google --> SEC : access_token, email, name
+SEC -> Handler : onAuthenticationSuccess()
+Handler -> UR : findByEmail(email)
+UR -> DB : SELECT * FROM app_user\nWHERE email=?
+DB --> UR : Optional<User>
+UR --> Handler : Optional<User>
+
+alt Пользователь существует
+  Handler -> Handler : generateJWT(existingUser)
+else Новый пользователь
+  Handler -> UR : save(newUser GOOGLE)
+  UR -> DB : INSERT INTO app_user ...
+  Handler -> Handler : generateJWT(newUser)
+end
+
+Handler --> UI : Redirect\n{APP_FRONTEND_URL}/oauth2/redirect\n?token=...&userId=...
+UI -> UI : Сохранить токен (OAuthRedirect)
+UI --> User : Перенаправить на /profile
+
+@enduml

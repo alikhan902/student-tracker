@@ -1,0 +1,35 @@
+@startuml sequence_diagram_2
+title Создание учебного предмета — POST /api/training-subjects
+actor "Староста" as HM
+participant "SubjectsPage\n(React)" as UI
+participant "TrainingSubjectController\n(Control)" as TSC
+participant "TrainingSubjectServiceImpl\n(Mediator)" as TSS
+participant "FileServiceImpl\n(Mediator)" as FS
+participant "TrainingSubjectRepository\n(Foundation)" as TSR
+database "PostgreSQL" as DB
+
+HM -> UI : Создать предмет:\ntitle, description, фото
+UI -> TSC : POST /api/training-subjects\nAuthorization: Bearer <JWT>\nmultipart: data + photo
+note right of TSC
+  @Valid + парсинг JSON
+  части multipart
+end note
+TSC -> TSS : create(dto, photo)
+TSS -> TSS : validateHeadmanAccess()
+TSS -> FS : saveFile("training-subjects", photo)
+FS --> TSS : photoPath (/uploads/...)
+TSS -> TSR : save(TrainingSubject)
+TSR -> DB : INSERT INTO training_subject ...
+DB --> TSR : TrainingSubject (id)
+TSR --> TSS : entity
+TSS -> TSS : modelMapper.map → DTO
+TSS --> TSC : TrainingSubjectResponseDTO
+TSC --> UI : HTTP 200 {dto}
+UI --> HM : Предмет в списке
+
+alt Группа не найдена / нет прав
+  TSS --> TSC : AccessDeniedException
+  TSC --> UI : HTTP 403 Forbidden
+end
+
+@enduml

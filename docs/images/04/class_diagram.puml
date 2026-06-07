@@ -1,0 +1,166 @@
+@startuml class_diagram
+title Детальная диаграмма классов — Backend (Student Tracker)
+skinparam packageStyle rectangle
+
+package "entity" #FFFACD {
+  enum StudentType { HEADMAN; STANDARD }
+  enum RoleType { ADMIN; USER; AUDITOR }
+  enum AuthProviderType { LOCAL; GOOGLE; GITHUB; EMAIL }
+  enum CompletionStatus { COMPLETED; NOT_COMPLETED }
+
+  class Group {
+    -id: Long
+    -name: String
+    -users: Set<User>
+    -trainingSubjects: Set<TrainingSubject>
+  }
+  class User {
+    -id: Long
+    -name: String
+    -username: String
+    -email: String
+    -password: String
+    -studentType: StudentType
+    -providerType: AuthProviderType
+    -roles: Set<RoleType>
+    -group: Group
+    --
+    +getAuthorities()
+    +getUsername()
+  }
+  class TrainingSubject {
+    -id: Long
+    -title: String
+    -description: String
+    -photoPath: String
+    -group: Group
+    -materials: Set<EducationalMaterial>
+  }
+  class EducationalMaterial {
+    -id: Long
+    -title: String
+    -filePath: String
+    -trainingSubject: TrainingSubject
+  }
+  class MaterialComplete {
+    -id: MaterialCompleteId
+    -status: CompletionStatus
+    -user: User
+    -material: EducationalMaterial
+  }
+  class MaterialCompleteId {
+    -userId: Long
+    -educationalMaterialId: Long
+  }
+
+  Group "1" -- "0..*" User
+  Group "1" -- "0..*" TrainingSubject
+  TrainingSubject "1" -- "0..*" EducationalMaterial
+  User "1" -- "0..*" MaterialComplete
+  EducationalMaterial "1" -- "0..*" MaterialComplete
+  MaterialComplete *-- MaterialCompleteId
+  User --> StudentType
+  User --> RoleType
+  MaterialComplete --> CompletionStatus
+}
+
+package "controller" #FFE4E1 {
+  class AuthController {
+    +login()
+    +signup()
+  }
+  class UserController {
+    +getProfile()
+    +updateProfile()
+    +forgotPassword()
+    +resetPassword()
+    +deleteAccount()
+  }
+  class GroupController {
+    +createGroup()
+    +getMyGroup()
+    +addStudent()
+    +deleteStudent()
+  }
+  class TrainingSubjectController {
+    +create()
+    +update()
+    +list()
+    +delete()
+  }
+  class EducationalMaterialController {
+    +create()
+    +listBySubject()
+    +delete()
+  }
+  class MaterialCompleteController {
+    +upsert()
+    +getStatus()
+  }
+}
+
+package "service" #E0FFE0 {
+  class AuthService {
+    +login()
+    +signup()
+    +generateToken()
+  }
+  class UserService {
+    +getProfile()
+    +updateProfile()
+    +forgotPassword()
+  }
+  class GroupServiceImpl {
+    +createGroup()
+    +addStudent()
+  }
+  class TrainingSubjectServiceImpl {
+    +create()
+    +listForGroup()
+  }
+  class EducationalMaterialServiceImpl {
+    +create()
+    +listBySubject()
+  }
+  class MaterialCompleteServiceImpl {
+    +upsert()
+    +getForUser()
+  }
+  class FileServiceImpl {
+    +saveFile()
+  }
+  class EmailServiceImpl {
+    +sendResetEmail()
+  }
+}
+
+package "repository" #E6F3FF {
+  interface UserRepository {
+    +findByUsername()
+    +findByEmail()
+  }
+  interface GroupRepository
+  interface TrainingSubjectRepository
+  interface EducationalMaterialRepository
+  interface MaterialCompleteRepository
+}
+
+AuthController --> AuthService
+UserController --> UserService
+GroupController --> GroupServiceImpl
+TrainingSubjectController --> TrainingSubjectServiceImpl
+EducationalMaterialController --> EducationalMaterialServiceImpl
+MaterialCompleteController --> MaterialCompleteServiceImpl
+
+AuthService --> UserRepository
+UserService --> UserRepository
+UserService --> EmailServiceImpl
+GroupServiceImpl --> GroupRepository
+GroupServiceImpl --> UserRepository
+TrainingSubjectServiceImpl --> TrainingSubjectRepository
+TrainingSubjectServiceImpl --> FileServiceImpl
+EducationalMaterialServiceImpl --> EducationalMaterialRepository
+EducationalMaterialServiceImpl --> FileServiceImpl
+MaterialCompleteServiceImpl --> MaterialCompleteRepository
+
+@enduml

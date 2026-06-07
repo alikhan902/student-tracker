@@ -1,0 +1,35 @@
+@startuml sequence_diagram_3
+title Добавление студента в группу — PUT /api/groups/add-student/{username}
+actor "Староста" as HM
+participant "GroupsPage\n(React)" as UI
+participant "GroupController\n(Control)" as GC
+participant "GroupServiceImpl\n(Mediator)" as GS
+participant "UserRepository\n(Foundation)" as UR
+database "PostgreSQL" as DB
+
+HM -> UI : Ввести username,\nнажать «Добавить»
+UI -> GC : PUT /api/groups/add-student/{username}\nAuthorization: Bearer <JWT>
+GC -> GS : addStudent(username)
+GS -> GS : getCurrentUser()\nпроверить HEADMAN
+GS -> UR : findByUsername(username)
+UR -> DB : SELECT * FROM app_user\nWHERE username=?
+DB --> UR : User
+UR --> GS : Optional<User>
+
+alt Пользователь найден (STANDARD, без группы)
+  GS -> GS : student.setGroup(headmanGroup)
+  GS -> UR : save(student)
+  UR -> DB : UPDATE app_user\nSET group_id=? WHERE id=?
+  DB --> UR : OK
+  GS --> GC : успех
+  GC --> UI : HTTP 200 / 204
+  UI --> HM : Список участников обновлён
+else Пользователь не найден
+  GS --> GC : ResourceNotFoundException
+  GC --> UI : HTTP 404 Not Found
+else Уже в группе / не STANDARD
+  GS --> GC : IllegalStateException
+  GC --> UI : HTTP 400 Bad Request
+end
+
+@enduml

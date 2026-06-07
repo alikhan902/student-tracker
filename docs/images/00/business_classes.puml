@@ -1,0 +1,72 @@
+@startuml business_classes
+title Модель бизнес-классов — Student Tracker
+skinparam classAttributeIconSize 0
+hide circle
+
+class Group {
+  name: String
+  --
+  createSubject()
+  addStudent()
+  removeStudent()
+}
+
+class User {
+  name: String
+  email: String
+  studentType: StudentType
+  role: RoleType
+  --
+  login()
+  updateProfile()
+  resetPassword()
+}
+
+class TrainingSubject {
+  title: String
+  description: String
+  --
+  addMaterial()
+  rename()
+  delete()
+}
+
+class EducationalMaterial {
+  title: String
+  filePath: String
+  --
+  download()
+  edit()
+  delete()
+}
+
+class MaterialComplete {
+  status: CompletionStatus
+}
+
+enum StudentType {
+  HEADMAN
+  STANDARD
+}
+
+enum RoleType {
+  ADMIN
+  USER
+  AUDITOR
+}
+
+enum CompletionStatus {
+  COMPLETED
+  NOT_COMPLETED
+}
+
+Group "1" *-- "0..*" User : содержит
+Group "1" *-- "0..*" TrainingSubject : владеет
+TrainingSubject "1" *-- "0..*" EducationalMaterial : содержит
+User "1" -- "0..*" MaterialComplete : отмечает
+EducationalMaterial "1" -- "0..*" MaterialComplete : имеет статус у
+User --> StudentType : имеет тип
+User --> RoleType : имеет роль
+MaterialComplete --> CompletionStatus : статус
+
+@enduml

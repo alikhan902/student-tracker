@@ -1,0 +1,92 @@
+@startuml use_case
+title Системные прецеденты — Student Tracker
+left to right direction
+
+actor Anonymous
+actor "User\n(USER)" as User
+actor "Староста\n(HEADMAN)" as Headman
+actor "Auditor\n(AUDITOR)" as Auditor
+
+rectangle "Student Tracker System" {
+  package "Аутентификация" {
+    usecase "UC-01\nРегистрация" as UC01
+    usecase "UC-02\nВход (логин/пароль)" as UC02
+    usecase "UC-03\nOAuth2 Google/GitHub" as UC03
+    usecase "UC-04\nЗапрос сброса пароля" as UC04
+    usecase "UC-05\nСброс по токену" as UC05
+  }
+  package "Профиль" {
+    usecase "UC-06\nПросмотр профиля" as UC06
+    usecase "UC-07\nРедактирование" as UC07
+    usecase "UC-08\nУдаление аккаунта" as UC08
+  }
+  package "Группа" {
+    usecase "UC-09\nСоздать группу" as UC09
+    usecase "UC-10\nМоя группа" as UC10
+    usecase "UC-11\nОбновить группу" as UC11
+    usecase "UC-12\nУдалить группу" as UC12
+    usecase "UC-13\nДобавить студента" as UC13
+    usecase "UC-14\nУдалить студента" as UC14
+  }
+  package "Предметы" {
+    usecase "UC-15\nСписок предметов" as UC15
+    usecase "UC-16\nСоздать предмет" as UC16
+    usecase "UC-17\nПросмотр предмета" as UC17
+    usecase "UC-18\nОбновить предмет" as UC18
+    usecase "UC-19\nУдалить предмет" as UC19
+  }
+  package "Материалы" {
+    usecase "UC-20\nСоздать материал" as UC20
+    usecase "UC-21\nСписок по предмету" as UC21
+    usecase "UC-22\nОбновить материал" as UC22
+    usecase "UC-23\nУдалить материал" as UC23
+  }
+  package "Выполнение" {
+    usecase "UC-24\nОтметить статус" as UC24
+    usecase "UC-25\nПолучить статус" as UC25
+  }
+}
+
+Anonymous --> UC01
+Anonymous --> UC02
+Anonymous --> UC03
+Anonymous --> UC04
+Anonymous --> UC05
+
+User --> UC06
+User --> UC07
+User --> UC08
+User --> UC15
+User --> UC17
+User --> UC21
+User --> UC24
+User --> UC25
+
+Headman --> UC06
+Headman --> UC07
+Headman --> UC08
+Headman --> UC09
+Headman --> UC10
+Headman --> UC11
+Headman --> UC12
+Headman --> UC13
+Headman --> UC14
+Headman --> UC15
+Headman --> UC16
+Headman --> UC17
+Headman --> UC18
+Headman --> UC19
+Headman --> UC20
+Headman --> UC21
+Headman --> UC22
+Headman --> UC23
+Headman --> UC24
+Headman --> UC25
+
+Auditor --> UC06
+Auditor --> UC10
+Auditor --> UC15
+Auditor --> UC17
+Auditor --> UC21
+
+@enduml

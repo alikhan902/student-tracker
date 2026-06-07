@@ -1,0 +1,31 @@
+@startuml sequence_diagram_1
+title Вход в систему — POST /auth/login
+actor "Пользователь" as User
+participant "LoginPage\n(React)" as UI
+participant "AuthController\n(Control)" as AC
+participant "AuthService\n(Mediator)" as AS
+participant "UserRepository\n(Foundation)" as UR
+database "PostgreSQL" as DB
+
+User -> UI : Ввод username + password
+UI -> AC : POST /auth/login\n{LoginRequestDTO}
+AC -> AS : login(dto)
+AS -> UR : findByUsername(username)
+UR -> DB : SELECT * FROM app_user\nWHERE username=?
+DB --> UR : User
+UR --> AS : Optional<User>
+AS -> AS : passwordEncoder.matches(\npassword, user.password)
+
+alt Пароль верный
+  AS -> AS : generateJWT(user)
+  AS --> AC : LoginResponseDTO {accessToken, userId}
+  AC --> UI : HTTP 200 {token}
+  UI -> UI : Сохранить токен\n(localStorage)
+  UI --> User : Перенаправить на /profile
+else Пароль неверный
+  AS --> AC : BadCredentialsException
+  AC --> UI : HTTP 401 Unauthorized
+  UI --> User : Сообщение об ошибке
+end
+
+@enduml

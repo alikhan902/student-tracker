@@ -1,0 +1,37 @@
+@startuml business_precedents
+title Бизнес-прецеденты — Student Tracker
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Староста\n(HEADMAN)" as HM
+actor "Студент\n(STANDARD)" as ST
+actor "Аудитор" as AU
+
+rectangle "Student Tracker — Система учёта учебных материалов" {
+  usecase "UC-B1\nРегистрация и вход" as UC1
+  usecase "UC-B2\nУправление группой" as UC2
+  usecase "UC-B3\nУправление составом" as UC3
+  usecase "UC-B4\nУчебные предметы" as UC4
+  usecase "UC-B5\nОбразовательные материалы" as UC5
+  usecase "UC-B6\nОтметка выполнения" as UC6
+  usecase "UC-B7\nВосстановление пароля" as UC7
+  usecase "UC-B8\nПросмотр (аудит)" as UC8
+}
+
+HM --> UC1
+HM --> UC2
+HM --> UC3
+HM --> UC4
+HM --> UC5
+
+ST --> UC1
+ST --> UC6
+ST --> UC7
+
+ST --> UC4 : просмотр
+ST --> UC5 : просмотр/скачивание
+
+AU --> UC1
+AU --> UC8
+
+@enduml

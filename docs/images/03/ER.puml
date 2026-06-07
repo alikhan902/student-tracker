@@ -1,0 +1,65 @@
+@startuml ER
+title ER-диаграмма — Student Tracker (PostgreSQL)
+skinparam linetype ortho
+hide circle
+
+entity "app_group" as app_group {
+  * id : BIGSERIAL <<PK>>
+  --
+  name : VARCHAR(255)
+}
+
+entity "app_user" as app_user {
+  * id : BIGSERIAL <<PK>>
+  --
+  name : VARCHAR(255)
+  username : VARCHAR(255) <<UNIQUE>>
+  email : VARCHAR(255) <<UNIQUE>>
+  password : VARCHAR(255)
+  student_type : VARCHAR(32)
+  provider_type : VARCHAR(32)
+  provider_id : VARCHAR(255)
+  reset_token : VARCHAR(255)
+  reset_token_expiry : TIMESTAMP
+  last_password_reset_request : TIMESTAMP
+  group_id : BIGINT <<FK>>
+}
+
+entity "user_roles" as user_roles {
+  * user_id : BIGINT <<FK>>
+  * roles : VARCHAR(32)
+}
+
+entity "training_subject" as training_subject {
+  * id : BIGSERIAL <<PK>>
+  --
+  title : VARCHAR(255)
+  description : TEXT
+  photo_path : VARCHAR(512)
+  group_id : BIGINT <<FK>>
+}
+
+entity "educational_materials" as educational_materials {
+  * id : BIGSERIAL <<PK>>
+  --
+  title : VARCHAR(255)
+  description : TEXT
+  file_path : VARCHAR(512)
+  training_subject_id : BIGINT <<FK>>
+}
+
+entity "material_complete" as material_complete {
+  * user_id : BIGINT <<PK,FK>>
+  * educational_material_id : BIGINT <<PK,FK>>
+  --
+  status : VARCHAR(32)
+}
+
+app_group ||--o{ app_user : contains
+app_group ||--o{ training_subject : has
+training_subject ||--o{ educational_materials : holds
+app_user ||--o{ user_roles : has
+app_user ||--o{ material_complete : tracks
+educational_materials ||--o{ material_complete : tracked_by
+
+@enduml

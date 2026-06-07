@@ -1,0 +1,104 @@
+@startuml PCMEF
+title Архитектура PCMEF — Student Tracker
+skinparam packageStyle rectangle
+top to bottom direction
+
+package "Presentation (P)" #FFFACD {
+  package "Web Client (React)" {
+    [LoginPage] as LP
+    [SignupPage] as SP
+    [ProfilePage] as PP
+    [SubjectsPage] as SubP
+    [SubjectDetailPage] as SDP
+    [GroupsPage] as GP
+    [OAuthRedirect] as OR
+  }
+  package "Desktop Client (JavaFX)" {
+    [LoginView] as LV
+    [ProfileView] as PV
+    [SubjectsView] as SV
+    [MaterialsView] as MV
+    [GroupView] as GV
+  }
+}
+
+package "Control (C) — controller" #FFE4E1 {
+  [AuthController]
+  [UserController]
+  [GroupController]
+  [TrainingSubjectController]
+  [EducationalMaterialController]
+  [MaterialCompleteController]
+}
+
+package "Mediator (M) — service" #E0FFE0 {
+  [AuthService]
+  [UserService]
+  [GroupServiceImpl]
+  [TrainingSubjectServiceImpl]
+  [EducationalMaterialServiceImpl]
+  [MaterialCompleteServiceImpl]
+  [FileServiceImpl]
+  [EmailServiceImpl]
+  interface IGroupService
+  interface ITrainingSubjectService
+  interface IEducationalMaterialService
+  interface IMaterialCompleteService
+  GroupServiceImpl ..|> IGroupService
+  TrainingSubjectServiceImpl ..|> ITrainingSubjectService
+  EducationalMaterialServiceImpl ..|> IEducationalMaterialService
+  MaterialCompleteServiceImpl ..|> IMaterialCompleteService
+}
+
+package "Entity (E) — entity" #FFFFE0 {
+  [User]
+  [Group]
+  [TrainingSubject]
+  [EducationalMaterial]
+  [MaterialComplete]
+}
+
+package "Foundation (F) — Repository" #E6F3FF {
+  [UserRepository]
+  [GroupRepository]
+  [TrainingSubjectRepository]
+  [EducationalMaterialRepository]
+  [MaterialCompleteRepository]
+  database PostgreSQL
+}
+
+LP -down-> [AuthController] : HTTP REST
+SP -down-> [AuthController]
+PP -down-> [UserController]
+SubP -down-> [TrainingSubjectController]
+SDP -down-> [EducationalMaterialController]
+GP -down-> [GroupController]
+LV -down-> [AuthController]
+PV -down-> [UserController]
+SV -down-> [TrainingSubjectController]
+MV -down-> [EducationalMaterialController]
+GV -down-> [GroupController]
+
+[AuthController] -down-> [AuthService]
+[UserController] -down-> [UserService]
+[GroupController] -down-> [GroupServiceImpl]
+[TrainingSubjectController] -down-> [TrainingSubjectServiceImpl]
+[EducationalMaterialController] -down-> [EducationalMaterialServiceImpl]
+[MaterialCompleteController] -down-> [MaterialCompleteServiceImpl]
+
+[AuthService] -down-> [UserRepository]
+[UserService] -down-> [UserRepository]
+[GroupServiceImpl] -down-> [GroupRepository]
+[TrainingSubjectServiceImpl] -down-> [TrainingSubjectRepository]
+[TrainingSubjectServiceImpl] -down-> [FileServiceImpl]
+[EducationalMaterialServiceImpl] -down-> [EducationalMaterialRepository]
+[EducationalMaterialServiceImpl] -down-> [FileServiceImpl]
+[MaterialCompleteServiceImpl] -down-> [MaterialCompleteRepository]
+
+[UserRepository] -down-> PostgreSQL
+[GroupRepository] -down-> PostgreSQL
+[TrainingSubjectRepository] -down-> PostgreSQL
+[EducationalMaterialRepository] -down-> PostgreSQL
+[MaterialCompleteRepository] -down-> PostgreSQL
+
+@enduml

@@ -1,0 +1,91 @@
+@startuml dependency_diagram
+title Диаграмма зависимостей — Student Tracker
+skinparam packageStyle rectangle
+
+package "Presentation" #FFFACD {
+  [React Web Client]
+  [JavaFX Desktop]
+}
+
+package "Backend" #E8F4FC {
+  package "Entity" {
+    [User] -down-> [Group] : ManyToOne
+    [TrainingSubject] -down-> [Group] : ManyToOne
+    [EducationalMaterial] -down-> [TrainingSubject] : ManyToOne
+    [MaterialComplete] -down-> [User] : MapsId
+    [MaterialComplete] -down-> [EducationalMaterial] : MapsId
+  }
+  package "Security" {
+    [JwtAuthFilter] -down-> [SecurityConfig] : uses
+    [SecurityConfig] -down-> [OAuth2successHandler] : configures
+    [AuthService] -down-> [JwtAuthFilter] : token
+  }
+  package "Control" {
+    [AuthController]
+    [UserController]
+    [GroupController]
+    [TrainingSubjectController]
+    [EducationalMaterialController]
+    [MaterialCompleteController]
+  }
+  package "Mediator" {
+    [AuthService]
+    [UserService]
+    [GroupServiceImpl]
+    [TrainingSubjectServiceImpl]
+    [EducationalMaterialServiceImpl]
+    [MaterialCompleteServiceImpl]
+    [FileServiceImpl]
+    [EmailServiceImpl]
+  }
+  package "Foundation" {
+    [UserRepository]
+    [GroupRepository]
+    [TrainingSubjectRepository]
+    [EducationalMaterialRepository]
+    [MaterialCompleteRepository]
+  }
+}
+
+database PostgreSQL
+
+[React Web Client] -down-> [AuthController] : HTTP/REST\n(JWT)
+[React Web Client] -down-> [UserController]
+[React Web Client] -down-> [GroupController]
+[React Web Client] -down-> [TrainingSubjectController]
+[React Web Client] -down-> [EducationalMaterialController]
+[JavaFX Desktop] -down-> [AuthController]
+[JavaFX Desktop] -down-> [UserController]
+[JavaFX Desktop] -down-> [GroupController]
+
+[AuthController] -down-> [AuthService]
+[UserController] -down-> [UserService]
+[GroupController] -down-> [GroupServiceImpl]
+[TrainingSubjectController] -down-> [TrainingSubjectServiceImpl]
+[EducationalMaterialController] -down-> [EducationalMaterialServiceImpl]
+[MaterialCompleteController] -down-> [MaterialCompleteServiceImpl]
+
+[AuthService] -down-> [UserRepository]
+[UserService] -down-> [UserRepository]
+[UserService] -down-> [EmailServiceImpl]
+[GroupServiceImpl] -down-> [GroupRepository]
+[GroupServiceImpl] -down-> [UserRepository]
+[TrainingSubjectServiceImpl] -down-> [TrainingSubjectRepository]
+[TrainingSubjectServiceImpl] -down-> [FileServiceImpl]
+[EducationalMaterialServiceImpl] -down-> [EducationalMaterialRepository]
+[EducationalMaterialServiceImpl] -down-> [FileServiceImpl]
+[MaterialCompleteServiceImpl] -down-> [MaterialCompleteRepository]
+
+[UserRepository] -down-> PostgreSQL
+[GroupRepository] -down-> PostgreSQL
+[TrainingSubjectRepository] -down-> PostgreSQL
+[EducationalMaterialRepository] -down-> PostgreSQL
+[MaterialCompleteRepository] -down-> PostgreSQL
+
+note bottom of Backend
+  Зависимости только вниз:
+  P → C → M → F → DB
+  Обратных связей нет
+end note
+
+@enduml
