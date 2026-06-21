@@ -1,13 +1,30 @@
-@startuml class_diagram
+@startuml
 title Детальная диаграмма классов — Backend (Student Tracker)
 skinparam packageStyle rectangle
 
 package "entity" #FFFACD {
-  enum StudentType { HEADMAN; STANDARD }
-  enum RoleType { ADMIN; USER; AUDITOR }
-  enum AuthProviderType { LOCAL; GOOGLE; GITHUB; EMAIL }
-  enum CompletionStatus { COMPLETED; NOT_COMPLETED }
+enum StudentType {
+    HEADMAN
+    STANDARD
+}
 
+enum RoleType {
+    ADMIN
+    USER
+    AUDITOR
+}
+
+enum AuthProviderType {
+    LOCAL
+    GOOGLE
+    GITHUB
+    EMAIL
+}
+
+enum CompletionStatus {
+    COMPLETED
+    NOT_COMPLETED
+}
   class Group {
     -id: Long
     -name: String
@@ -162,5 +179,4 @@ TrainingSubjectServiceImpl --> FileServiceImpl
 EducationalMaterialServiceImpl --> EducationalMaterialRepository
 EducationalMaterialServiceImpl --> FileServiceImpl
 MaterialCompleteServiceImpl --> MaterialCompleteRepository
-
 @enduml
