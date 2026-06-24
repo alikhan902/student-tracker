@@ -51,9 +51,15 @@
 ### 05 — Реализация
 - [Заметки по реализации](05-implementation/implementation-notes.md)
 
-### 06 — Рефакторинг
+### 06 — Реализация (отчёты качества)
+- [README](06-implementation/README.md)
+- [Отчёт о покрытии тестами](06-implementation/test-coverage-report.md)
+- [JaCoCo HTML-отчёт (backend)](06-implementation/jacoco/index.html)
+- [Отчёт статического анализа](06-implementation/static-analysis-report.md)
+
+### 06 — Рефакторинг и качество кода
 - [Паттерны](06-refactoring/patterns.md)
-- [Отчёт статического анализа](06-refactoring/static-analysis-report.md)
+- [Отчёт статического анализа (архив)](06-refactoring/static-analysis-report.md)
 
 ### 07 — Управление
 - [Техническое задание](07-management/technical-specification.md)
@@ -64,9 +70,25 @@
 - [Диаграмма Ганта](07-management/gantt.md)
 - [Оценка COCOMO](07-management/cocomo.md)
 
+### 08 — Финальная документация
+- [README](08-final/README.md)
+- [Руководство пользователя (финал)](08-final/user-manual.md)
+- [Руководство администратора (финал)](08-final/admin-manual.md)
+
 ## Диаграммы (PlantUML)
 
 Исходники в [`docs/images/`](images/README.md) — структура как в `docs-templ/images/`. Рендер: `plantuml docs/images/**/*.puml`.
+
+## Git-статистика репозитория
+
+| Файл | Описание |
+|------|----------|
+| [git-activity-graph.png](images/git-activity-graph.png) | График активности (commits per week) |
+| [git-contribution-heatmap.png](images/git-contribution-heatmap.png) | Тепловая карта вкладов |
+| [git-activity-graph.svg](images/git-activity-graph.svg) | Векторная версия графика |
+| [git-contribution-heatmap.svg](images/git-contribution-heatmap.svg) | Векторная версия heatmap |
+
+> Для обновления снимков откройте GitHub → Insights → Pulse / Contributors и сохраните скриншоты в `docs/images/`.
 
 ## Быстрый старт
 

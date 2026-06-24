@@ -1,5 +1,7 @@
 # Отчёт статического анализа
 
+> **Актуальная версия:** [docs/06-implementation/static-analysis-report.md](../06-implementation/static-analysis-report.md)
+
 ## Инструменты
 
 | Инструмент | Область | Назначение |

@@ -1,6 +1,15 @@
-# Руководство администратора / развёртывание
+# Руководство администратора
 
-## 1. Требования
+## Student Tracker — развёртывание и сопровождение
+
+**Версия документа:** 1.0  
+**Дата:** 05.06.2026  
+**Автор:** Мадаев Алихан Ахьядович, ПИЖ-б-о-23-1  
+**Статус:** финальная версия (этап 8)
+
+---
+
+## 1. Требования к окружению
 
 | Компонент | Версия |
 |-----------|--------|
@@ -8,6 +17,8 @@
 | Java (локальная сборка) | 17+ |
 | Node.js (локальный frontend) | 18+ |
 | PostgreSQL | 16 |
+
+---
 
 ## 2. Конфигурация
 
@@ -19,6 +30,8 @@ cp backend/.example backend/.env  # при локальном запуске bac
 
 Ключевые переменные — см. корневой `README.md` и [implementation-notes](../05-implementation/implementation-notes.md).
 
+---
+
 ## 3. Docker Compose
 
 ```bash
@@ -27,7 +40,7 @@ docker compose logs -f backend
 docker compose down   # остановка
 ```
 
-### Сервисы
+### 3.1. Сервисы
 
 | Сервис | Порт | Описание |
 |--------|------|----------|
@@ -36,10 +49,12 @@ docker compose down   # остановка
 | frontend | 5173 | Vite dev server |
 | nginx | 80, 443 | Reverse proxy + SSL |
 
-### Тома
+### 3.2. Тома
 
 - `postgres_data` — данные БД
 - `./backend/uploads` — загруженные файлы
+
+---
 
 ## 4. HTTPS (Nginx)
 
@@ -55,6 +70,8 @@ mkcert localhost 127.0.0.1 ::1
 
 **Продакшн:** Let's Encrypt / Certbot на публичном домене; обновить `APP_FRONTEND_URL` и `VITE_API_BASE_URL` на `https://...`.
 
+---
+
 ## 5. Мониторинг и обслуживание
 
 - Healthcheck PostgreSQL в compose
@@ -62,12 +79,16 @@ mkcert localhost 127.0.0.1 ::1
 - Резервное копирование: volume `postgres_data` + каталог `backend/uploads`
 - Swagger: `/swagger-ui.html` на backend
 
+---
+
 ## 6. Безопасность
 
 - Храните `JWT_SECRET` только в `.env`, не коммитьте
 - Используйте сильный `POSTGRES_PASSWORD`
 - В production: только HTTPS, ограничить CORS при необходимости
 - Не публикуйте `GOOGLE_CLIENT_SECRET` в репозитории
+
+---
 
 ## 7. Обновление версии
 
@@ -77,3 +98,24 @@ docker compose up --build -d
 ```
 
 При изменении схемы БД — проверить `ddl-auto` или выполнить миграции вручную (см. [DDL](../03-database/ddl-scripts.md)).
+
+---
+
+## 8. Генерация отчётов качества
+
+```bash
+# Backend: тесты + JaCoCo + Checkstyle
+cd backend
+./mvnw clean verify
+
+# Frontend: ESLint + Vitest coverage
+cd frontend
+npm run lint
+npm run coverage
+```
+
+Отчёты размещаются в [docs/06-implementation/](../06-implementation/).
+
+---
+
+*Дубликат для этапа 8. Актуальная версия также в [07-management/admin-manual.md](../07-management/admin-manual.md).*

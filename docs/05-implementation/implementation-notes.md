@@ -81,11 +81,13 @@ java -jar target/*.jar
 
 | Модуль | Объём | Примечание |
 |--------|-------|------------|
-| Backend | ~21 test-классов | Unit: entities, enums, `MaterialCompleteService`, mapping |
+| Backend | ~21 test-классов, ~48% lines (JaCoCo) | Unit: entities, enums, `MaterialCompleteService`, mapping |
 | Frontend | 8 Vitest-файлов | ~91% line coverage на протестированных компонентах |
 | Desktop | 3 test-класса | Минимальный набор |
 
 **МУ:** покрытие > 40% — выполняется за счёт backend + frontend unit-тестов.
+
+**Отчёты:** [test-coverage-report.md](../06-implementation/test-coverage-report.md), [JaCoCo HTML](../06-implementation/jacoco/index.html).
 
 ## Swagger
 

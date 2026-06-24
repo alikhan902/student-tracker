@@ -34,3 +34,12 @@ plantuml docs/images/04/*.puml
 | `04/sequence_diagram_2.puml` | Создание предмета |
 | `04/sequence_diagram_3.puml` | Добавление студента в группу |
 | `04/sequence_diagram_4.puml` | OAuth2 Google |
+
+## Git-статистика
+
+| Файл | Описание |
+|------|----------|
+| `git-activity-graph.png` / `.svg` | График активности коммитов |
+| `git-contribution-heatmap.png` / `.svg` | Тепловая карта вкладов (contribution graph) |
+
+Снимки соответствуют репозиторию https://github.com/alikhan902/student-tracker (Insights → Pulse).
